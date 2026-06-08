@@ -1,7 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-
 :root {
   --font-family: var(--font-pt-sans);
 }
@@ -67,4 +64,13 @@ body {
 .swiper-button-next:hover {
   background: #184363;
   color: white !important;
+}
+
+@layer components {
+  .form-input {
+    @apply border border-gray-300 hover:border-gray-400 transition
+    focus-visible:ring-0 focus-visible:ring-[#2dc67b]
+    focus-visible:border-[#2dc67b]
+    focus-visible:ring-offset-0;
+  }
 }
