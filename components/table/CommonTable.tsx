@@ -21,7 +21,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function PorductTable<TData, TValue>({
+export function CommonTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

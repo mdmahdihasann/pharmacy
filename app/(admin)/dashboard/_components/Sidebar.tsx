@@ -19,7 +19,7 @@ const NAV = [
   },
   { icon: <GoPackageDependents />, label: "Orders", href: "/orders" },
   { icon: <RiShoppingBag4Line />, label: "Products", href: "/products" },
-  { icon: <LuUsers />, label: "Customers", href: "/customers" },
+  { icon: <LuUsers />, label: "Category", href: "/category" },
   { icon: <IoBarChartOutline />, label: "Analytics", href: "/analytics" },
   { icon: <MdOutlinePayment />, label: "Payments", href: "/payments" },
   { icon: <MdOutlineInventory />, label: "Inventory", href: "/inventory" },

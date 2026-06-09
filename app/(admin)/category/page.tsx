@@ -2,11 +2,11 @@
 import { FaPlus } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import ProductForm from "./_components/ProductForm";
 
 import { TbEdit } from "react-icons/tb";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { CommonTable } from "@/components/table/CommonTable";
+import CategoryFrom from "./_components/CategoryFrom";
 
 const columns = [
   {
@@ -18,20 +18,8 @@ const columns = [
     header: "Name",
   },
   {
-    accessorKey: "price",
-    header: "Price",
-  },
-  {
-    accessorKey: "sku",
-    header: "SKU",
-  },
-  {
-    accessorKey: "category",
-    header: "Category",
-  },
-  {
-    accessorKey: "stock",
-    header: "Stock",
+    accessorKey: "slug",
+    header: "slug",
   },
   {
     accessorKey: "status",
@@ -131,7 +119,7 @@ const page = () => {
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold tracking-tight text-gray-100">
-            Products
+            Category
           </h1>
           <div>
             <DialogTrigger asChild>
@@ -147,7 +135,7 @@ const page = () => {
         <CommonTable columns={columns} data={data} />
       </div>
 
-      <ProductForm />
+      <CategoryFrom />
     </Dialog>
   );
 };
