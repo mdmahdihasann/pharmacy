@@ -1,13 +1,25 @@
+import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { GoPackageDependents } from "react-icons/go";
+import { RiShoppingBag4Line } from "react-icons/ri";
+import { LuUsers } from "react-icons/lu";
+import { IoBarChartOutline } from "react-icons/io5";
+import { MdOutlinePayment } from "react-icons/md";
+import { MdOutlineInventory } from "react-icons/md";
+import { IoSettingsOutline } from "react-icons/io5";
 
 const NAV = [
-  { icon:"⊞",  label:"Dashboard",  badge:null },
-  { icon:"🛍", label:"Orders",     badge:12   },
-  { icon:"💊", label:"Products",   badge:null },
-  { icon:"👥", label:"Customers",  badge:null },
-  { icon:"📊", label:"Analytics",  badge:null },
-  { icon:"💳", label:"Payments",   badge:null },
-  { icon:"📦", label:"Inventory",  badge:null },
-  { icon:"⚙", label:"Settings",   badge:null },
+  {
+    icon: <MdOutlineDashboardCustomize />,
+    label: "Dashboard",
+    href: "/dashboard",
+  },
+  { icon: <GoPackageDependents />, label: "Orders", href: "/orders" },
+  { icon: <RiShoppingBag4Line />, label: "Products", href: "/products" },
+  { icon: <LuUsers />, label: "Category", href: "/category" },
+  { icon: <IoBarChartOutline />, label: "Analytics", href: "/analytics" },
+  { icon: <MdOutlinePayment />, label: "Payments", href: "/payments" },
+  { icon: <MdOutlineInventory />, label: "Inventory", href: "/inventory" },
+  { icon: <IoSettingsOutline />, label: "Settings", href: "/settings" },
 ];
 
 export function NavBtn({ item, active, onClick }: { item: typeof NAV[number]; active: string; onClick: () => void }) {
@@ -24,11 +36,7 @@ export function NavBtn({ item, active, onClick }: { item: typeof NAV[number]; ac
     >
       <span className="text-base w-4 text-center flex-shrink-0">{item.icon}</span>
       <span className="flex-1 text-left">{item.label}</span>
-      {item.badge && (
-        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full text-white" style={{ background:"#2dc67b" }}>
-          {item.badge}
-        </span>
-      )}
+    
     </button>
   );
 }

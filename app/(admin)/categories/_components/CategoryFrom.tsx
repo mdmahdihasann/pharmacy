@@ -1,6 +1,6 @@
 "use client";
 
-import {useForm} from "react-hook-form"
+import { useForm } from "react-hook-form";
 
 import {
   DialogContent,
@@ -12,21 +12,46 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-type FormData = {
-  name: string,
-  images: string,
-  status: string
-}
+import type { FormData } from "@/types/CategoryForm";
+import api from "@/lib/axios";
 
 export default function CategoryFrom() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm<FormData>();
 
-const {register, handleSubmit, formState: {errors}} = useForm<FormData>();
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "");
+  };
 
-const onSubmit = (data: FormData, e?: any) => {
-  e?.preventDefault();
-  console.log(data)
-}
+  const onSubmit = async (data: FormData) => {
+    const file = data.images?.[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("name", data.name);
+    formData.append("slug", data.slug);
+    formData.append("status", data.status);
+
+    try {
+      const res = await api.post("/categories", formData);
+      console.log("Success:", res.data);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+    reset();
+  };
 
   return (
     <DialogContent className="sm:max-w-xl bg-white rounded-xl p-6">
@@ -37,15 +62,22 @@ const onSubmit = (data: FormData, e?: any) => {
       </DialogHeader>
 
       {/* FORM START */}
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {/* Name */}
         <div className="space-y-2">
           <Label>Name</Label>
           <Input
-          {...register("name", {required: "Name is required"})}
+            {...register("name", { required: "Name is required" })}
             name="name"
             className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
             placeholder="name"
+            onChange={(e) => {
+              const name = e.target.value;
+              setValue("slug", generateSlug(name));
+            }}
           />
         </div>
 
@@ -53,7 +85,10 @@ const onSubmit = (data: FormData, e?: any) => {
         <div className="space-y-2">
           <Label>Slug</Label>
           <Input
+            {...register("slug", { required: "Name is required" })}
             name="slug"
+            disabled
+            readOnly
             type="text"
             className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
             placeholder="slug"
@@ -64,7 +99,8 @@ const onSubmit = (data: FormData, e?: any) => {
         <div className="space-y-2">
           <Label>Image</Label>
           <Input
-          {...register("images", {required: "Images is required"})}
+            {...register("images", { required: "Images is required" })}
+            accept="image/*"
             type="file"
             name="images"
             className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
@@ -77,7 +113,7 @@ const onSubmit = (data: FormData, e?: any) => {
           <Label htmlFor="status">Status</Label>
 
           <select
-          {...register("status", {required: "Status is required"})}
+            {...register("status", { required: "Status is required" })}
             id="status"
             name="status"
             className="w-full py-1.5 rounded-md border border-gray-300 px-3 text-sm hover:border-gray-400 focus:outline-none focus:border-[#2dc67b] focus:ring-1 focus:ring-[#2dc67b]"

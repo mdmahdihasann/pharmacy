@@ -19,13 +19,13 @@ const columns = [
   },
   {
     accessorKey: "slug",
-    header: "slug",
+    header: "Slug",
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status;
+    cell: (row: any) => {
+      const status = row.status;
 
       return (
         <span
@@ -49,8 +49,8 @@ const columns = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const product = row.original;
+    cell: (row: any) => {
+      const product = row;
 
       const handleEdit = () => {
         console.log("Edit:", product);

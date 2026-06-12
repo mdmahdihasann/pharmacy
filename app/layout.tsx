@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={ptSans.className}>
+      <body className={ptSans.className} cz-shortcut-listen="true">
           {children}
       </body>
     </html>
