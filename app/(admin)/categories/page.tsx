@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { FaPlus } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
@@ -7,6 +7,9 @@ import { TbEdit } from "react-icons/tb";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { CommonTable } from "@/components/table/CommonTable";
 import CategoryFrom from "./_components/CategoryFrom";
+import { useEffect, useState } from "react";
+import api from "@/lib/axios";
+import DeletePopover from "@/components/DeletePopover";
 
 const columns = [
   {
@@ -43,6 +46,17 @@ const columns = [
   {
     accessorKey: "image",
     header: "Image",
+    cell: (row: any) => {
+      const image = row.image;
+
+      return (
+        <img
+          src={image}
+          alt="category"
+          className="w-16 h-16 rounded object-cover"
+        />
+      );
+    },
   },
 
   // ✅ ACTIONS (IMPORTANT FIX)
@@ -57,7 +71,7 @@ const columns = [
       };
 
       const handleDelete = () => {
-        console.log("Delete:", product.id);
+        <DeletePopover/>
       };
 
       return (
@@ -81,41 +95,23 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    id: 1,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Success",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Pending",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Pending",
-    image: "",
-  },
-];
 const page = () => {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await api.get("/categories");
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    load();
+  }, []);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold tracking-tight text-gray-100">
@@ -135,7 +131,7 @@ const page = () => {
         <CommonTable columns={columns} data={data} />
       </div>
 
-      <CategoryFrom />
+      <CategoryFrom setOpen={setOpen} />
     </Dialog>
   );
 };

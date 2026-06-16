@@ -1,59 +1,71 @@
+// app/api/categories/route.ts
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { uploadToCloudinary } from "@/lib/upload";
+
+export async function GET() {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return NextResponse.json(categories, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const formData = await req.formData();
 
-    if (!body.name) {
-      return NextResponse.json(
-        { error: "Name is required" },
-        { status: 400 }
-      );
-    }
+    const name = formData.get("name") as string;
+    const slug = formData.get("slug") as string;
+    const status = (formData.get("status") as string) || "active";
+    const imageFile = formData.get("image") as File | null;
 
-    if (!body.slug) {
-      return NextResponse.json(
-        { error: "Slug is required" },
-        { status: 400 }
-      );
-    }
+    let imageUrl: string | null = null;
+    let imagePublicId: string | null = null;
 
-    const existingCategory = await prisma.category.findUnique({
-      where: {
-        slug: body.slug,
-      },
-    });
+    if (imageFile && imageFile.size > 0) {
+      const uploadResult = await uploadToCloudinary(imageFile, "categories");
 
-    if (existingCategory) {
-      return NextResponse.json(
-        { error: "Slug already exists" },
-        { status: 409 }
-      );
+      if (uploadResult && typeof uploadResult === "object") {
+        imageUrl = uploadResult.secure_url || null;
+        imagePublicId = uploadResult.public_id || null;
+      }
     }
 
     const category = await prisma.category.create({
       data: {
-        name: body.name,
-        slug: body.slug,
-        status: body.status || "active",
-        image: body.image || null,
-        imagePublicId: body.imagePublicId || null,
+        name,
+        slug,
+        status,
+        image: imageUrl,
+        imagePublicId: imagePublicId,
       },
     });
 
-    return NextResponse.json(category, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: category,
+        message: "Category created successfully",
+      },
+      { status: 201 },
+    );
   } catch (error: any) {
     console.error("CATEGORY CREATE ERROR:", error);
 
     return NextResponse.json(
       {
+        success: false,
         error: error.message,
         code: error.code,
         meta: error.meta,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

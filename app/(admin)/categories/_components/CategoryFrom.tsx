@@ -14,8 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { FormData } from "@/types/CategoryForm";
 import api from "@/lib/axios";
+import { toast } from "sonner";
 
-export default function CategoryFrom() {
+export default function CategoryFrom({ setOpen }: { setOpen: (v: boolean) => void }) {
   const {
     register,
     handleSubmit,
@@ -33,6 +34,7 @@ export default function CategoryFrom() {
   };
 
   const onSubmit = async (data: FormData) => {
+    
     const file = data.images?.[0];
     if (!file) {
       console.log("No file selected");
@@ -45,9 +47,11 @@ export default function CategoryFrom() {
     formData.append("status", data.status);
 
     try {
-      const res = await api.post("/categories", formData);
-      console.log("Success:", res.data);
+      await api.post("/categories", formData);
+      toast.success("Category created successfully!");
+      setOpen(false);
     } catch (error) {
+      toast.error("Something went wrong!")
       console.log("Error:", error);
     }
     reset();

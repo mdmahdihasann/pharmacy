@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PT_Sans } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const ptSans = PT_Sans({
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={ptSans.className} cz-shortcut-listen="true">
           {children}
+          <Toaster position="top-right" richColors />
       </body>
     </html>
   );
