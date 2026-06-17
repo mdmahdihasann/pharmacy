@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import api from "@/lib/axios";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 export default function DeletePopover({ id, onSuccess }: any) {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export default function DeletePopover({ id, onSuccess }: any) {
     try {
       setLoading(true);
 
-      await api.delete(`/categories/${id}`);
+      await api.delete(`/categories/${id}`, {method: "DELETE"});
 
       toast.success("Deleted successfully");
 
@@ -33,18 +34,18 @@ export default function DeletePopover({ id, onSuccess }: any) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="destructive" size="sm">
-          Delete
+        <Button variant="destructive" size="sm" className="px-1.5 py-1 text-[15px] border border-red-700 text-red-600 hover:bg-red-700 hover:text-white rounded-md">
+          <RiDeleteBin5Line/>
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-52">
-        <p className="text-sm mb-3">
+      <PopoverContent className="w-48 bg-white">
+        <p className="text-sm mb-3 text-center">
           Are you sure you want to delete?
         </p>
 
         <div className="flex justify-end gap-2">
-          <Button size="sm" variant="outline">
+          <Button size="sm"  className="border border-gray-500">
             Cancel
           </Button>
 
@@ -53,6 +54,7 @@ export default function DeletePopover({ id, onSuccess }: any) {
             variant="destructive"
             onClick={handleDelete}
             disabled={loading}
+            className="border border-red-700 text-red-600 hover:bg-red-700 hover:text-white rounded-md"
           >
             {loading ? "Deleting..." : "Yes Delete"}
           </Button>

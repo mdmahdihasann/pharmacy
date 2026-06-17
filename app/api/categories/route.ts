@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { uploadToCloudinary } from "@/lib/upload";
 
+
 export async function GET() {
   try {
     const categories = await prisma.category.findMany({
@@ -69,3 +70,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

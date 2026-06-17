@@ -15,8 +15,14 @@ import { Label } from "@/components/ui/label";
 import type { FormData } from "@/types/CategoryForm";
 import api from "@/lib/axios";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
-export default function CategoryFrom({ setOpen }: { setOpen: (v: boolean) => void }) {
+export default function CategoryFrom({
+  setOpen,
+  catData,
+}: {
+  setOpen: (v: boolean) => void;
+}) {
   const {
     register,
     handleSubmit,
@@ -33,35 +39,52 @@ export default function CategoryFrom({ setOpen }: { setOpen: (v: boolean) => voi
       .replace(/[^\w-]+/g, "");
   };
 
-  const onSubmit = async (data: FormData) => {
-    
-    const file = data.images?.[0];
-    if (!file) {
-      console.log("No file selected");
-      return;
+  useEffect(() => {
+    if (catData) {
+      setValue("name", catData.name);
+      setValue("slug", catData.slug);
+      setValue("status", catData.status);
+    } else {
+      reset();
     }
+  }, [catData]);
+
+  const onSubmit = async (data: FormData) => {
     const formData = new FormData();
-    formData.append("image", file);
+
     formData.append("name", data.name);
     formData.append("slug", data.slug);
     formData.append("status", data.status);
 
-    try {
-      await api.post("/categories", formData);
-      toast.success("Category created successfully!");
-      setOpen(false);
-    } catch (error) {
-      toast.error("Something went wrong!")
-      console.log("Error:", error);
+    const file = data.images?.[0];
+
+    // 👇 only send image if exists
+    if (file) {
+      formData.append("image", file);
     }
-    reset();
+
+    try {
+      if (data?.id) {
+        await api.put(`/categories/${data?.id}`, formData);
+        toast.success("Category Updated successfully!");
+      } else {
+        await api.post("/categories", formData);
+        toast.success("Category created successfully!");
+        setOpen(false);
+      }
+
+      reset();
+    } catch (error) {
+      toast.error("Something went wrong!");
+      console.log(error);
+    }
   };
 
   return (
     <DialogContent className="sm:max-w-xl bg-white rounded-xl p-6">
       <DialogHeader>
         <DialogTitle className="text-xl font-semibold">
-          Add Category
+          { catData ? "Edit" : "Add"} Category
         </DialogTitle>
       </DialogHeader>
 
@@ -146,7 +169,7 @@ export default function CategoryFrom({ setOpen }: { setOpen: (v: boolean) => voi
             type="submit"
             className="bg-[#2dc67b] border border-[#2dc67b] text-white"
           >
-            Save Category
+            { catData ? "Updated" : "Save Category"}
           </Button>
         </div>
       </form>
