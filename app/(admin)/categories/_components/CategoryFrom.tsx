@@ -15,13 +15,16 @@ import { Label } from "@/components/ui/label";
 import type { FormData } from "@/types/CategoryForm";
 import api from "@/lib/axios";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function CategoryFrom({
   setOpen,
   catData,
+  onSuccess
 }: {
   setOpen: (v: boolean) => void;
+  catData: any;
+  onSuccess: any;
 }) {
   const {
     register,
@@ -47,30 +50,33 @@ export default function CategoryFrom({
     } else {
       reset();
     }
-  }, [catData]);
+  }, [catData, reset, setValue]);
 
   const onSubmit = async (data: FormData) => {
     const formData = new FormData();
-
+    
     formData.append("name", data.name);
     formData.append("slug", data.slug);
     formData.append("status", data.status);
 
     const file = data.images?.[0];
 
-    // 👇 only send image if exists
+    // only send image if exists
     if (file) {
       formData.append("image", file);
     }
 
     try {
-      if (data?.id) {
-        await api.put(`/categories/${data?.id}`, formData);
+      if (catData?.id) {
+        await api.put(`/categories/${catData?.id}`, formData);
         toast.success("Category Updated successfully!");
+        setOpen(false);
+        onSuccess?.();
       } else {
         await api.post("/categories", formData);
         toast.success("Category created successfully!");
         setOpen(false);
+        onSuccess?.();
       }
 
       reset();
@@ -84,7 +90,7 @@ export default function CategoryFrom({
     <DialogContent className="sm:max-w-xl bg-white rounded-xl p-6">
       <DialogHeader>
         <DialogTitle className="text-xl font-semibold">
-          { catData ? "Edit" : "Add"} Category
+          {catData ? "Edit" : "Add"} Category
         </DialogTitle>
       </DialogHeader>
 
@@ -147,10 +153,8 @@ export default function CategoryFrom({
             defaultValue=""
           >
             <option value="">Select Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="out_of_stock">Out Of Stock</option>
-            <option value="draft">Draft</option>
+            <option value="1">Publish</option>
+            <option value="2">Pending</option>
           </select>
         </div>
 
@@ -169,7 +173,7 @@ export default function CategoryFrom({
             type="submit"
             className="bg-[#2dc67b] border border-[#2dc67b] text-white"
           >
-            { catData ? "Updated" : "Save Category"}
+            {catData ? "Updated" : "Save Category"}
           </Button>
         </div>
       </form>

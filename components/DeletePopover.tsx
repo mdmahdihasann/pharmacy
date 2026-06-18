@@ -11,18 +11,18 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
-export default function DeletePopover({ id, onSuccess }: any) {
+export default function DeletePopover({ id, onSuccess}: any) {
   const [loading, setLoading] = useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
 
   const handleDelete = async () => {
     try {
       setLoading(true);
 
-      await api.delete(`/categories/${id}`, {method: "DELETE"});
-
+      await api.delete(`/categories/${id}`, { method: "DELETE" });
+      setOpenPopup(false);
       toast.success("Deleted successfully");
-
-      onSuccess?.(); // parent refresh data
+      onSuccess?.();
     } catch (error) {
       console.log(error);
       toast.error("Delete failed");
@@ -32,10 +32,14 @@ export default function DeletePopover({ id, onSuccess }: any) {
   };
 
   return (
-    <Popover>
+    <Popover open={openPopup} onOpenChange={setOpenPopup}>
       <PopoverTrigger asChild>
-        <Button variant="destructive" size="sm" className="px-1.5 py-1 text-[15px] border border-red-700 text-red-600 hover:bg-red-700 hover:text-white rounded-md">
-          <RiDeleteBin5Line/>
+        <Button
+          variant="destructive"
+          size="sm"
+          className="px-1.5 py-1 text-[15px] border border-red-700 text-red-600 hover:bg-red-700 hover:text-white rounded-md"
+        >
+          <RiDeleteBin5Line />
         </Button>
       </PopoverTrigger>
 
@@ -45,7 +49,11 @@ export default function DeletePopover({ id, onSuccess }: any) {
         </p>
 
         <div className="flex justify-end gap-2">
-          <Button size="sm"  className="border border-gray-500">
+          <Button
+            size="sm"
+            className="border border-gray-500"
+            onClick={() => setOpenPopup(false)}
+          >
             Cancel
           </Button>
 

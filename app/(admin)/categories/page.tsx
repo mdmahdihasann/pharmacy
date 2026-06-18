@@ -15,24 +15,24 @@ const page = () => {
   const [data, setData] = useState<any[]>([]);
   const [selectData, setSelectData] = useState<any>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await api.get("/categories");
-        setData(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    load();
-  }, []);
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // column
   const columns = [
     {
-      accessorKey: "id",
-      header: "ID",
+      accessorKey: "sl",
+      header: "SL",
     },
     {
       accessorKey: "name",
@@ -51,12 +51,12 @@ const page = () => {
         return (
           <span
             className={`px-2 py-1 text-xs rounded ${
-              status === "Success"
+              status === "1"
                 ? "font-semibold border border-green-600 text-green-600 rounded-md text-sm"
                 : "font-semibold border border-yellow-600 text-yellow-600 rounded-md text-sm"
             }`}
           >
-            {status}
+            {status === "1" ? "Publish" : "Pending"}
           </span>
         );
       },
@@ -86,7 +86,7 @@ const page = () => {
 
         const handleEdit = (product: any) => {
           setOpen(true);
-          setSelectData(product)
+          setSelectData(product);
         };
 
         return (
@@ -98,19 +98,14 @@ const page = () => {
               <TbEdit />
             </button>
 
-            <DeletePopover
-              id={product.id}
-              onSuccess={() => {
-                // reload data
-              }}
-            />
+            <DeletePopover id={product.id} onSuccess={fetchCategories}/>
           </div>
         );
       },
     },
   ];
   return (
-    <Dialog open={open} onOpenChange={setOpen}  >
+    <Dialog open={open} onOpenChange={setOpen}>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold tracking-tight text-gray-100">
@@ -121,6 +116,7 @@ const page = () => {
               <Button
                 className="text-[14px] font-medium text-gray-200 hover:text-gray-600 dark:hover:text-gray-200 border border-gray-200
              dark:border-gray-700 rounded-lg px-3 py-2 transition-colors"
+             onClick={()=>setSelectData(null)}
               >
                 <FaPlus /> Add New
               </Button>
@@ -130,7 +126,7 @@ const page = () => {
         <CommonTable columns={columns} data={data} />
       </div>
 
-      <CategoryFrom setOpen={setOpen} catData={selectData}/>
+      <CategoryFrom setOpen={setOpen} catData={selectData} onSuccess={fetchCategories}/>
     </Dialog>
   );
 };
