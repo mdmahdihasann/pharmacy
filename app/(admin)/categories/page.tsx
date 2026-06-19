@@ -9,16 +9,23 @@ import CategoryFrom from "./_components/CategoryFrom";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import DeletePopover from "@/components/DeletePopover";
+import { SpinnerCustom } from "@/components/Spinner";
 
 const page = () => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [selectData, setSelectData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchCategories = async () => {
     try {
+      setLoading(true)
       const res = await api.get("/categories");
-      setData(res.data);
+      const formattedData = res.data.map((item: any, index: number) => ({
+        ...item,
+        sl: index + 1,
+      }));
+      setData(formattedData);
     } catch (error) {
       console.log(error);
     }
@@ -28,6 +35,7 @@ const page = () => {
     fetchCategories();
   }, []);
 
+  
   // column
   const columns = [
     {
@@ -82,23 +90,23 @@ const page = () => {
       id: "actions",
       header: "Actions",
       cell: (row: any) => {
-        const product = row;
+        const category = row;
 
-        const handleEdit = (product: any) => {
+        const handleEdit = (category: any) => {
           setOpen(true);
-          setSelectData(product);
+          setSelectData(category);
         };
 
         return (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => handleEdit(product)}
+              onClick={() => handleEdit(category)}
               className="px-1.5 py-1 text-[15px] border border-blue-700 text-blue-600 hover:bg-blue-700 hover:text-white rounded-md"
             >
               <TbEdit />
             </button>
 
-            <DeletePopover id={product.id} onSuccess={fetchCategories}/>
+            <DeletePopover id={category.id} onSuccess={fetchCategories} apiUrl="categories"/>
           </div>
         );
       },
@@ -116,17 +124,21 @@ const page = () => {
               <Button
                 className="text-[14px] font-medium text-gray-200 hover:text-gray-600 dark:hover:text-gray-200 border border-gray-200
              dark:border-gray-700 rounded-lg px-3 py-2 transition-colors"
-             onClick={()=>setSelectData(null)}
+                onClick={() => setSelectData(null)}
               >
                 <FaPlus /> Add New
               </Button>
             </DialogTrigger>
           </div>
         </div>
-        <CommonTable columns={columns} data={data} />
+        <CommonTable columns={columns} data={data} loading={loading}/>
       </div>
 
-      <CategoryFrom setOpen={setOpen} catData={selectData} onSuccess={fetchCategories}/>
+      <CategoryFrom
+        setOpen={setOpen}
+        catData={selectData}
+        onSuccess={fetchCategories}
+      />
     </Dialog>
   );
 };

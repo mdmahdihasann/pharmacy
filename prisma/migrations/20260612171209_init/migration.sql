@@ -1,9 +1,0 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `Image` on the `Category` table. All the data in the column will be lost.
-
-*/
--- AlterTable
-ALTER TABLE "Category" DROP COLUMN "Image",
-ADD COLUMN     "image" TEXT;

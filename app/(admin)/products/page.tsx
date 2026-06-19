@@ -7,11 +7,39 @@ import ProductForm from "./_components/ProductForm";
 import { TbEdit } from "react-icons/tb";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { CommonTable } from "@/components/table/CommonTable";
+import api from "@/lib/axios";
+import { useEffect, useState } from "react";
+import DeletePopover from "@/components/DeletePopover";
 
-const columns = [
+
+
+const page = () => {
+  const [data, setData] = useState<any[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const fetchProduct = async() =>{
+    try {
+      const res = await api.get("/products");
+      const formateData = await res.data.map((item: any, index: number)=>({
+        ...item,
+        sl: index + 1
+      }))
+      setData(formateData);
+
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+  useEffect(()=>{
+    fetchProduct();
+  },[])
+
+  const columns = [
   {
-    accessorKey: "id",
-    header: "ID",
+    accessorKey: "sl",
+    header: "SL",
   },
   {
     accessorKey: "name",
@@ -26,37 +54,24 @@ const columns = [
     header: "SKU",
   },
   {
-    accessorKey: "category",
-    header: "Category",
-  },
-  {
     accessorKey: "stock",
     header: "Stock",
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: (row: any) => {
-      
-      const status = row?.status;
+      accessorKey: "images",
+      header: "Image",
+      cell: (row: any) => {
+        const image = row.images;
 
-      return (
-        <span
-          className={`px-2 py-1 text-xs rounded ${
-            status === "Success"
-              ? "font-semibold border border-green-600 text-green-600 rounded-md text-sm"
-              : "font-semibold border border-yellow-600 text-yellow-600 rounded-md text-sm"
-          }`}
-        >
-          {status}
-        </span>
-      );
+        return (
+          <img
+            src={image}
+            alt="product"
+            className="w-16 h-16 rounded object-cover"
+          />
+        );
+      },
     },
-  },
-  {
-    accessorKey: "image",
-    header: "Image",
-  },
 
   // ✅ ACTIONS (IMPORTANT FIX)
   {
@@ -69,10 +84,7 @@ const columns = [
         console.log("Edit:", product);
       };
 
-      const handleDelete = () => {
-        console.log("Delete:", product.id);
-      };
-
+    
       return (
         <div className="flex items-center gap-2">
           <button
@@ -82,53 +94,15 @@ const columns = [
             <TbEdit />
           </button>
 
-          <button
-            onClick={handleDelete}
-            className="px-1.5 py-1 text-[15px] border border-red-700 text-red-600 hover:bg-red-700 hover:text-white rounded-md"
-          >
-            <RiDeleteBin5Line />
-          </button>
+          <DeletePopover id={product?.id} onSuccess={fetchProduct} apiUrl="products"/>
         </div>
       );
     },
   },
 ];
 
-const data = [
-  {
-    id: 1,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Success",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Pending",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "Paracetamol",
-    price: 10,
-    sku: "SKU-001",
-    category: "Medicine",
-    stock: 100,
-    status: "Pending",
-    image: "",
-  },
-];
-const page = () => {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-semibold tracking-tight text-gray-100">
@@ -148,7 +122,7 @@ const page = () => {
         <CommonTable columns={columns} data={data} />
       </div>
 
-      <ProductForm />
+      <ProductForm onSuccess={fetchProduct} setOpen={setOpen}/>
     </Dialog>
   );
 };

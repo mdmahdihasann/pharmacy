@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SpinnerCustom } from "../Spinner";
 
 interface CommonTableProps {
   columns: {
@@ -16,9 +17,14 @@ interface CommonTableProps {
     cell?: (row: any) => React.ReactNode;
   }[];
   data: any[];
+  loading?: boolean;
 }
 
-export function CommonTable({ columns, data }: CommonTableProps) {
+export function CommonTable({ columns, data, loading }: CommonTableProps) {
+
+  if(loading){
+    <SpinnerCustom/>
+  }
   return (
     <div className="overflow-hidden rounded-md border border-gray-600">
       <Table>
@@ -52,7 +58,7 @@ export function CommonTable({ columns, data }: CommonTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-24 text-center text-white">
                 No results.
               </TableCell>
             </TableRow>

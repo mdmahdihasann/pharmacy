@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import api from "@/lib/axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
-export default function DeletePopover({ id, onSuccess}: any) {
+export default function DeletePopover({ id, onSuccess, apiUrl}: any) {
   const [loading, setLoading] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
 
@@ -19,7 +19,7 @@ export default function DeletePopover({ id, onSuccess}: any) {
     try {
       setLoading(true);
 
-      await api.delete(`/categories/${id}`, { method: "DELETE" });
+      await api.delete(`/${apiUrl}/${id}`, { method: "DELETE" });
       setOpenPopup(false);
       toast.success("Deleted successfully");
       onSuccess?.();
