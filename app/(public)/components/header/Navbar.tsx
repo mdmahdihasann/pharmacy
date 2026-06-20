@@ -7,9 +7,11 @@ import { useState } from "react";
 import { LuGitCompareArrows } from "react-icons/lu";
 import { FiHeart } from "react-icons/fi";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import CartPopup from "../cartPopup/CartPopup";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const navLinks = [
     "Home",
@@ -116,14 +118,14 @@ const Navbar = () => {
             <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative">
               <FiHeart className="text-xl"/>
             </button>
-            <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative">
+            <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative" onClick={()=>setOpen(true)}>
               
               <MdOutlineShoppingCart className="text-xl"/>
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
                 2
               </span>
             </button>
-
+              {open && <CartPopup isOpen={open} setOpen={setOpen}/>}
             <button
               className="md:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

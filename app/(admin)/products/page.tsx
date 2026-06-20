@@ -16,6 +16,7 @@ import DeletePopover from "@/components/DeletePopover";
 const page = () => {
   const [data, setData] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
+  const [selectData, setSelectData] = useState<any>(null);
 
   const fetchProduct = async() =>{
     try {
@@ -77,11 +78,12 @@ const page = () => {
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }: any) => {
+    cell: (row: any) => {
       const product = row;
 
       const handleEdit = () => {
-        console.log("Edit:", product);
+        setOpen(true);
+        setSelectData(product)
       };
 
     
@@ -113,6 +115,7 @@ const page = () => {
               <Button
                 className="text-[14px] font-medium text-gray-200 hover:text-gray-600 dark:hover:text-gray-200 border border-gray-200
              dark:border-gray-700 rounded-lg px-3 py-2 transition-colors"
+             onClick={()=>setSelectData(null)}
               >
                 <FaPlus /> Add New
               </Button>
@@ -122,7 +125,7 @@ const page = () => {
         <CommonTable columns={columns} data={data} />
       </div>
 
-      <ProductForm onSuccess={fetchProduct} setOpen={setOpen}/>
+      <ProductForm onSuccess={fetchProduct} setOpen={setOpen} pdData={selectData}/>
     </Dialog>
   );
 };

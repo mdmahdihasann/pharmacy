@@ -18,7 +18,15 @@ import api from "@/lib/axios";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
-export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean) => void; onSuccess: any}) {
+export default function ProductDialog({
+  onSuccess,
+  setOpen,
+  pdData,
+}: {
+  setOpen: (v: boolean) => void;
+  onSuccess: any;
+  pdData: any;
+}) {
   const [categories, setCategories] = useState([]);
   const {
     register,
@@ -36,6 +44,19 @@ export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean
     fetachCategory();
   }, []);
 
+  useEffect(() => {
+    if (pdData) {
+      setValue("sku", pdData.sku);
+      setValue("name", pdData.name);
+      setValue("price", pdData.price);
+      setValue("weight", pdData.weight);
+      setValue("stock", pdData.stock);
+      setValue("description", pdData.description);
+    }else {
+      reset();
+    }
+  }, [setValue, pdData, reset]);
+
   const onSubmit = async (data: FormDataType) => {
     const formData = new FormData();
     formData.append("sku", data.sku);
@@ -51,10 +72,18 @@ export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean
       formData.append("images", file);
     }
     try {
-      await api.post("/products", formData);
-      toast.success("Category created successfully!");
-      onSuccess?.();
-      setOpen(false);
+      if (pdData?.id) {
+        await api.put(`/products/${pdData?.id}`, formData);
+        toast.success("Category Updated successfully!");
+        onSuccess?.();
+        setOpen(false);
+      } else {
+        await api.post("/products", formData);
+        toast.success("Category created successfully!");
+        onSuccess?.();
+        setOpen(false);
+      }
+
       reset();
     } catch (error) {
       toast.error("Something went wrong!");
@@ -65,7 +94,7 @@ export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean
   return (
     <DialogContent className="sm:max-w-2xl bg-white rounded-xl p-6">
       <DialogHeader>
-        <DialogTitle className="text-xl font-semibold">Add Product</DialogTitle>
+        <DialogTitle className="text-xl font-semibold">{pdData?.id ? "Edit" : "Add"} Product</DialogTitle>
       </DialogHeader>
 
       {/* FORM START */}
@@ -129,7 +158,9 @@ export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean
           >
             <option value="">Select category</option>
             {categories.map((cat: any) => (
-              <option key={cat?.id} value={cat.id}>{cat.name}</option>
+              <option key={cat?.id} value={cat.id}>
+                {cat.name}
+              </option>
             ))}
           </select>
         </div>
@@ -186,7 +217,7 @@ export default function ProductDialog({onSuccess, setOpen}:{setOpen: (v: boolean
             type="submit"
             className="bg-[#2dc67b] border border-[#2dc67b] text-white"
           >
-            Save Product
+            {pdData?.id ? "Update" : "Save"} Product
           </Button>
         </div>
       </form>
