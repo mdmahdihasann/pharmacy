@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary } from "@/lib/upload";
+import fs from "fs";
 import { NextResponse } from "next/server";
+import path from "path";
 
 export async function GET() {
   try {
@@ -21,35 +22,74 @@ export async function POST(req: Request) {
 
     const name = formData.get("name") as string;
     const sku = formData.get("sku") as string;
+
+    const genericName = formData.get("genericName") as string;
+    const packSize = formData.get("packSize") as string;
+
     const price = Number(formData.get("price"));
-    const weight = formData.get("weight") as string;
-    const description = formData.get("description") as string;
+    const salePrice = Number(formData.get("salePrice") || 0);
+
     const stock = Number(formData.get("stock"));
+
+    const dosageForm = formData.get("dosageForm") as string;
+    const strength = formData.get("strength") as string;
+
+    const description = formData.get("description") as string;
+    const manufacturer = formData.get("manufacturer") as string;
+
     const categoryId = formData.get("categoryId") as string;
+
+    const prescriptionReq = formData.get("prescriptionReq") === "true";
+
+    const status = formData.get("status") !== "false";
+
+    const expiryDateValue = formData.get("expiryDate") as string;
+
+    const expiryDate = expiryDateValue ? new Date(expiryDateValue) : null;
     const imageFile = formData.get("images") as File | null;
 
-    let imagesUrl: string | null = null;
-    let imagePublicId: string | null = null;
+    let imagesUrl: string | null = "";
 
-    if (imageFile && imageFile.size > 0) {
-      const uploadResult = await uploadToCloudinary(imageFile, "products");
+    if (imageFile) {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const fileName = Date.now() + "-" + imageFile.name;
+      const uploadDir = path.join(process.cwd(), "/public/uploads/product");
 
-      if (uploadResult && typeof uploadResult === "object") {
-        imagesUrl = uploadResult.secure_url || null;
-        imagePublicId = uploadResult.public_id || null;
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
       }
+      fs.writeFileSync(path.join(uploadDir, fileName), buffer);
+      imagesUrl = `/uploads/product/${fileName}`;
     }
 
     const products = await prisma.product.create({
       data: {
-        name,
         sku,
+        name,
+
+        genericName,
+        packSize,
+
         price,
-        weight,
-        description,
+        salePrice,
+
         stock,
+
+        dosageForm,
+        strength,
+
+        description,
+
+        manufacturer,
+
+        expiryDate,
+
+        prescriptionReq,
+        status,
+
         images: imagesUrl,
-        thumbnail: imagePublicId,
+
         categoryId,
       },
     });

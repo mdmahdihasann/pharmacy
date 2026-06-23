@@ -12,7 +12,6 @@ model Category {
   name          String
   slug          String    @unique
   image         String?
-  imagePublicId String?
   status        String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -20,18 +19,37 @@ model Category {
 }
 
 model Product {
-  id          String  @id @default(cuid())
-  sku         String  @unique
-  name        String
-  price       Float
-  weight      String?
-  description String?
-  thumbnail   String?
-  images      String?
-  stock       Int @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
 
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  sku             String   @unique
+  name            String
+
+  genericName     String?
+  packSize       String? 
+
+  price           Float
+  salePrice       Float?
+
+  stock           Int      @default(0)
+
+  dosageForm      String?
+  strength        String? 
+
+  description     String?
+
+  images          String?
+
+  manufacturer    String? 
+
+  expiryDate      DateTime?
+
+  prescriptionReq Boolean  @default(false)
+
+  status          Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  categoryId      String
+  category        Category @relation(fields: [categoryId], references: [id])
 }

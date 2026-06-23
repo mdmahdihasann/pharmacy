@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { uploadToCloudinary } from "@/lib/upload";
+import path from "path";
+import fs from "fs";
 
 
 export async function GET() {
@@ -26,17 +28,23 @@ export async function POST(req: Request) {
     const status = (formData.get("status") as string) || "active";
     const imageFile = formData.get("image") as File | null;
 
-    let imageUrl: string | null = null;
-    let imagePublicId: string | null = null;
+    let imageUrl: string | null = "";
 
-    if (imageFile && imageFile.size > 0) {
-      const uploadResult = await uploadToCloudinary(imageFile, "categories");
-
-      if (uploadResult && typeof uploadResult === "object") {
-        imageUrl = uploadResult.secure_url || null;
-        imagePublicId = uploadResult.public_id || null;
+    if(imageFile){
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const uploadDir = path.join(process.cwd(), "public/uploads/category");
+      if(!fs.existsSync(uploadDir)){
+        fs.mkdirSync(uploadDir, {recursive: true});
       }
+      fs.writeFileSync(
+        path.join(uploadDir, fileName), buffer
+      )
+      imageUrl = `/uploads/category/${fileName}`;
+
     }
+    
 
     const category = await prisma.category.create({
       data: {
@@ -44,7 +52,6 @@ export async function POST(req: Request) {
         slug,
         status,
         image: imageUrl,
-        imagePublicId: imagePublicId,
       },
     });
 

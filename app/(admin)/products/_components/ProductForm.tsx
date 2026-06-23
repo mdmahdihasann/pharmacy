@@ -49,10 +49,20 @@ export default function ProductDialog({
       setValue("sku", pdData.sku);
       setValue("name", pdData.name);
       setValue("price", pdData.price);
-      setValue("weight", pdData.weight);
+      setValue("salePrice", pdData.salePrice);
+      setValue("genericName", pdData.genericName);
       setValue("stock", pdData.stock);
       setValue("description", pdData.description);
-    }else {
+      setValue("packSize", pdData.packSize);
+      setValue("strength", pdData.strength);
+      setValue("dosageForm", pdData.dosageForm);
+      setValue("manufacturer", pdData.manufacturer);
+      setValue("prescriptionReq", pdData.prescriptionReq);
+      setValue("status", pdData.status);
+      setValue("expiryDate", pdData.expiryDate);
+      setValue("categoryId", pdData.categoryId);
+      setValue("images", pdData.images);
+    } else {
       reset();
     }
   }, [setValue, pdData, reset]);
@@ -61,11 +71,28 @@ export default function ProductDialog({
     const formData = new FormData();
     formData.append("sku", data.sku);
     formData.append("name", data.name);
+
     formData.append("price", data.price.toString());
-    formData.append("weight", data.weight);
+
+    formData.append("salePrice", data.salePrice?.toString() || "");
+
     formData.append("stock", data.stock.toString());
-    formData.append("description", data.description);
+
+    formData.append("genericName", data.genericName || "");
+    formData.append("packSize", data.packSize || "");
+
+    formData.append("strength", data.strength || "");
+    formData.append("dosageForm", data.dosageForm || "");
+    formData.append("manufacturer", data.manufacturer || "");
+
+    formData.append("description", data.description || "");
+
     formData.append("categoryId", data.categoryId);
+
+    formData.append("prescriptionReq", String(data.prescriptionReq));
+    formData.append("status", String(data.status));
+
+    formData.append("expiryDate", data.expiryDate || "");
 
     const file = data.images?.[0];
     if (file) {
@@ -94,131 +121,198 @@ export default function ProductDialog({
   return (
     <DialogContent className="sm:max-w-2xl bg-white rounded-xl p-6">
       <DialogHeader>
-        <DialogTitle className="text-xl font-semibold">{pdData?.id ? "Edit" : "Add"} Product</DialogTitle>
+        <DialogTitle className="text-xl font-semibold">
+          {pdData?.id ? "Edit" : "Add"} Product
+        </DialogTitle>
       </DialogHeader>
 
       {/* FORM START */}
       <form
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"
         onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white"
       >
         {/* SKU */}
-        <div className="space-y-2">
-          <Label>SKU</Label>
+        <div className="space-y-1">
+          <Label className="text-sm font-medium">SKU</Label>
           <Input
             {...register("sku", { required: "Sku is required" })}
-            name="sku"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="sku"
+            placeholder="MED-001"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
 
-        {/* Name */}
-        <div className="space-y-2">
-          <Label>Product Name</Label>
+        {/* Product Name */}
+        <div className="space-y-1">
+          <Label className="text-sm font-medium">Product Name</Label>
           <Input
             {...register("name", { required: "Product Name is required" })}
-            name="name"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="product name"
+            placeholder="Sibelium 10mg Tablet"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Generic Name */}
+        <div className="space-y-1">
+          <Label>Generic Name</Label>
+          <Input
+            {...register("genericName")}
+            placeholder="Flunarizine"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Brand Name */}
+        <div className="space-y-1">
+          <Label>Pack Size</Label>
+          <Input
+            {...register("packSize")}
+            placeholder="Sibelium"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
 
         {/* Price */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Price</Label>
           <Input
-            {...register("price", { required: "Price is required" })}
-            name="price"
             type="number"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="price"
+            {...register("price", { required: "Price is required" })}
+            placeholder="150"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
 
-        {/* Weight */}
-        <div className="space-y-2">
-          <Label>Weight</Label>
+        {/* Sale Price */}
+        <div className="space-y-1">
+          <Label>Sale Price</Label>
           <Input
-            {...register("weight", { required: "Weight is required" })}
-            name="weight"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="weight"
+            type="number"
+            {...register("salePrice")}
+            placeholder="120"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Stock */}
+        <div className="space-y-1">
+          <Label>Stock</Label>
+          <Input
+            type="number"
+            {...register("stock")}
+            placeholder="50"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Strength */}
+        <div className="space-y-1">
+          <Label>Strength</Label>
+          <Input
+            {...register("strength")}
+            placeholder="10 mg"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Dosage Form */}
+        <div className="space-y-1">
+          <Label>Dosage Form</Label>
+          <select
+            {...register("dosageForm")}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:ring-green-500"
+          >
+            <option value="">Select</option>
+            <option value="Tablet">Tablet</option>
+            <option value="Capsule">Capsule</option>
+            <option value="Syrup">Syrup</option>
+            <option value="Injection">Injection</option>
+          </select>
+        </div>
+
+        {/* Manufacturer */}
+        <div className="space-y-1">
+          <Label>Manufacturer</Label>
+          <Input
+            {...register("manufacturer")}
+            placeholder="Square / Incepta"
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
 
         {/* Category */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Category</Label>
           <select
-            {...register("categoryId", { required: "Category is required" })}
-            name="categoryId"
-            className="w-full py-1.5 rounded-md border border-gray-300 px-3 text-sm hover:border-gray-400 focus:outline-none focus:border-[#2dc67b] focus:ring-1 focus:ring-[#2dc67b]"
-            defaultValue=""
+            {...register("categoryId")}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:ring-green-500"
           >
             <option value="">Select category</option>
             {categories.map((cat: any) => (
-              <option key={cat?.id} value={cat.id}>
+              <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Stock */}
-        <div className="space-y-2">
-          <Label>Stock</Label>
+        {/* Expiry Date */}
+        <div className="space-y-1">
+          <Label>Expiry Date</Label>
           <Input
-            {...register("stock", { required: "Stock is required" })}
-            name="stock"
-            type="number"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="stock"
+            type="date"
+            {...register("expiryDate")}
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
+
         {/* Description */}
-        <div className="space-y-2 md:col-span-2">
+        <div className="md:col-span-2 space-y-1">
           <Label>Description</Label>
           <Textarea
-            {...register("description", {
-              required: "Description is required",
-            })}
-            name="description"
+            {...register("description")}
             rows={4}
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
             placeholder="Write product details..."
+            className="w-full border-gray-300 focus:border-green-500 focus:ring-green-500"
           />
         </div>
 
-        {/* Images */}
-        <div className="space-y-2 md:col-span-2">
-          <Label>Image</Label>
+        {/* Image */}
+        <div className="md:col-span-2 space-y-1">
+          <Label>Product Image</Label>
           <Input
-            {...register("images", { required: "Image is required" })}
             type="file"
-            name="images"
-            className="border border-gray-300 hover:border-gray-400 transition focus:border-[#2dc67b] focus:ring-[#2dc67b] focus-visible:ring-1"
-            placeholder="url1, url2, url3"
+            {...register("images")}
+            className="w-full border-gray-300"
           />
         </div>
 
-        {/* FORM ACTIONS */}
-        <div className="md:col-span-2 flex justify-end gap-2 mt-2">
+        {/* Checkbox Row */}
+        <div className="md:col-span-2 flex gap-6 items-center">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" {...register("prescriptionReq")} />
+            Prescription Required
+          </label>
+
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" {...register("status")} defaultChecked />
+            Active Product
+          </label>
+        </div>
+
+        {/* Buttons */}
+        <div className="md:col-span-2 flex justify-end gap-3 pt-3">
           <DialogClose asChild>
-            <Button
-              variant="outline"
-              className="border border-gray-400 hover:border-gray-500 transition"
-            >
+            <button className="px-4 py-2 border rounded-md hover:bg-gray-100">
               Cancel
-            </Button>
+            </button>
           </DialogClose>
 
-          <Button
+          <button
             type="submit"
-            className="bg-[#2dc67b] border border-[#2dc67b] text-white"
+            className="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
           >
             {pdData?.id ? "Update" : "Save"} Product
-          </Button>
+          </button>
         </div>
       </form>
     </DialogContent>

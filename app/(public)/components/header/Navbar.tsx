@@ -8,6 +8,7 @@ import { LuGitCompareArrows } from "react-icons/lu";
 import { FiHeart } from "react-icons/fi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import CartPopup from "../cartPopup/CartPopup";
+import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -113,25 +114,33 @@ const Navbar = () => {
           </div>
           <div className="flex items-center gap-2">
             <button className="hidden sm:block p-2 text-gray-600 hover:text-[#2dc67b] transition-colors">
-              <LuGitCompareArrows className="text-xl"/>
+              <LuGitCompareArrows className="text-xl" />
             </button>
             <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative">
-              <FiHeart className="text-xl"/>
+              <FiHeart className="text-xl" />
             </button>
-            <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative" onClick={()=>setOpen(true)}>
-              
-              <MdOutlineShoppingCart className="text-xl"/>
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
-                2
-              </span>
-            </button>
-              {open && <CartPopup isOpen={open} setOpen={setOpen}/>}
+
+            <Drawer direction="right">
+              <DrawerTrigger asChild>
+                <button
+                  className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative"
+                  onClick={() => setOpen(true)}
+                >
+                  <MdOutlineShoppingCart className="text-xl" />
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                    2
+                  </span>
+                </button>
+              </DrawerTrigger>
+            
+            {open && <CartPopup />}
             <button
               className="md:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {/* {mobileMenuOpen ? <Icon.X /> : <Icon.Menu />} */}
             </button>
+            </Drawer>
           </div>
         </div>
       </nav>

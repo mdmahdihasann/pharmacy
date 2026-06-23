@@ -1,7 +1,8 @@
-import cloudinary from "@/lib/cloudinary";
+
 import { prisma } from "@/lib/prisma";
-import { uploadToCloudinary } from "@/lib/upload";
+import fs from "fs";
 import { NextResponse } from "next/server";
+import path from "path";
 
 export async function PUT(
   req: Request,
@@ -28,16 +29,23 @@ export async function PUT(
     }
 
     let imageUrl: string | null = category.image;
-    let imagePublichId: string | null = category.imagePublicId;
 
     if (imageFile && imageFile.size > 0) {
-      if (category.imagePublicId) {
-        await cloudinary.uploader.destroy(category.imagePublicId);
+      if (category?.image) {
+        const oldFile = path.join(process.cwd(), "public", category?.image);
+        if (fs.existsSync(oldFile)) {
+          fs.unlinkSync(oldFile);
+        }
       }
 
-      const uploadResult = await uploadToCloudinary(imageFile, "categories");
-      imageUrl = uploadResult?.secure_url;
-      imagePublichId = uploadResult?.public_id;
+      const fileName = Date.now() + "-" + imageFile.name;
+      const bytes = await imageFile.arrayBuffer();
+      fs.writeFileSync(
+        path.join(process.cwd(), "public/uploads/category", fileName),
+        Buffer.from(bytes),
+      );
+
+      imageUrl = `/uploads/category/${fileName}`;
     }
 
     const updatedCategory = await prisma.category.update({
@@ -47,7 +55,6 @@ export async function PUT(
         slug,
         status,
         image: imageUrl,
-        imagePublicId: imagePublichId,
       },
     });
 
@@ -93,8 +100,12 @@ export async function DELETE(
       );
     }
 
-    if (category.imagePublicId) {
-      await cloudinary.uploader.destroy(category.imagePublicId);
+    if (category?.image) {
+      const imagePath = path.join(process.cwd(), "public", category.image);
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
     }
     await prisma.category.delete({
       where: {
