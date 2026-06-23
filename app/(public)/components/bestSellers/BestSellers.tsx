@@ -1,6 +1,6 @@
+import api from "@/lib/axios";
 import Image from "next/image";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 
 // ─── Icons (inline SVG) ───────────────────────────────────────────────────────
 const Icon = {
@@ -234,67 +234,7 @@ const Icon = {
   ),
 };
 
-
-
-const bestsellers = [
-  {
-    id: 1,
-    brand: "Nature's",
-    name: "Montelukast",
-    price: "$37.10",
-    oldPrice: null,
-    rating: 4,
-    img: "/images/product/product1.jpg",
-    tag: null,
-    color: "from-slate-50 to-slate-100",
-  },
-  {
-    id: 2,
-    brand: "Now",
-    name: "Embase",
-    price: "$43.47",
-    oldPrice: null,
-    rating: 4,
-    img: "/images/product/product2.jpg",
-    tag: null,
-    color: "from-blue-50 to-blue-100",
-  },
-  {
-    id: 3,
-    brand: "Daily",
-    name: "Healthy Care Apple Cider Vinegar",
-    price: "$13.95",
-    oldPrice: null,
-    rating: 5,
-    img: "/images/product/product3.jpg",
-    tag: "Sale",
-    color: "from-green-50 to-green-100",
-  },
-  {
-    id: 4,
-    brand: "Neucare",
-    name: "Nature's Own Biosilk Strength",
-    price: "$11.91",
-    oldPrice: null,
-    rating: 4,
-    img: "/images/product/product4.jpg",
-    tag: null,
-    color: "from-purple-50 to-purple-100",
-  },
-  {
-    id: 5,
-    brand: "Vitala",
-    name: "Honey Elixoro One Night",
-    price: "$11.91",
-    oldPrice: "$44.00",
-    rating: 5,
-    img: "/images/product/product5.jpg",
-    tag: "Sale",
-    color: "from-amber-50 to-amber-100",
-  },
-];
-
-function Stars({ rating, max = 5 }) {
+function Stars({ rating, max = 5 }: any) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: max }).map((_, i) => (
@@ -304,7 +244,7 @@ function Stars({ rating, max = 5 }) {
   );
 }
 
-function Badge({ label }) {
+function Badge({ label }: any) {
   const styles = {
     Sale: "bg-red-500 text-white",
     New: "bg-emerald-500 text-white",
@@ -319,7 +259,7 @@ function Badge({ label }) {
   );
 }
 
-function AddToCartBtn({ label = "Add to cart", small }) {
+function AddToCartBtn({ label = "Add to cart", small }: any) {
   return (
     <button
       className={`flex items-center justify-center gap-1.5 bg-[#edf4f6] hover:bg-[#184363] hover:text-white transition-all rounded-full font-bold ${small ? "text-xs px-3 py-2.5 w-full" : "text-sm px-4 py-2.5 w-full"}`}
@@ -330,12 +270,10 @@ function AddToCartBtn({ label = "Add to cart", small }) {
   );
 }
 
-
-
-function ProductCard({ product, size = "md" }) {
+function ProductCard({ product, size = "md" } : any) {
   const [wished, setWished] = useState(false);
   return (
-    <div className="bg-white rounded-2xl transition-all duration-300 group relative flex flex-col">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative flex flex-col overflow-hidden p-4">
       {product.tag && (
         <div className="absolute top-3 left-3 z-10 ">
           <Badge label={product.tag} />
@@ -361,12 +299,16 @@ function ProductCard({ product, size = "md" }) {
         </svg>
       </button>
       <div className="flex items-center justify-center h-full text-5xl mb-3 overflow-hidden ">
-        <Image src={product.img} width={200} height={100} alt={product.name} className="w-full rounded-lg" />
+        <Image
+          src={product.images}
+          width={200}
+          height={100}
+          alt={product.name}
+          className="w-full rounded-lg"
+        />
       </div>
-      <p className="text-[10px] text-[#2dc67b] uppercase tracking-wide font-semibold">
-        {product.brand}
-      </p>
-      <p className="text-md text-gray-800 font-medium leading-snug mt-0.5 mb-2 flex-1 line-clamp-2">
+      
+      <p className="text-md text-gray-800 font-bold mt-0.5 mb-2 flex-1">
         {product.name}
       </p>
       {product.rating && (
@@ -401,13 +343,22 @@ function ProductCard({ product, size = "md" }) {
 }
 
 const BestSellers = () => {
+  const [bestSaller, setBestSaller] = useState([]);
+  console.log(bestSaller);
+  
+  useEffect(() => {
+    const bestSaller = async () => {
+      const data = await api.get("products");
+      setBestSaller(data.data);
+    };
+    bestSaller();
+  }, []);
+
   return (
-    <section className="py-14 bg-white">
+    <section className="py-14 bg-gradient-to-b from-white via-gray-200 to-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-[#1a2e44]">
-            Bestsellers
-          </h2>
+          <h2 className="text-2xl font-bold text-[#1a2e44]">Bestsellers</h2>
           <a
             href="#"
             className="text-[#2dc67b] text-sm font-semibold flex items-center gap-1 hover:gap-2 transition-all"
@@ -416,7 +367,7 @@ const BestSellers = () => {
           </a>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-          {bestsellers.map((p) => (
+          {bestSaller.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
