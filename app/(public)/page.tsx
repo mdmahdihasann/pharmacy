@@ -3,6 +3,7 @@ import Slider from "./components/heroSection/Slider";
 import Category from "./components/categorySection/Category";
 import BestSellers from "./components/bestSellers/BestSellers";
 
+
 export default function PropharmHome() {
   return (
     <>

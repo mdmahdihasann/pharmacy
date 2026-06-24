@@ -6,8 +6,8 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  DrawerClose,
 } from "@/components/ui/drawer";
+import { FaPlus, FaMinus } from "react-icons/fa6";
 
 export default function CartPopup() {
   const cartItems = [
@@ -33,10 +33,10 @@ export default function CartPopup() {
   );
 
   return (
-    <DrawerContent className="h-screen max-w-md ml-auto rounded-none bg-white flex flex-col">
+    <DrawerContent className="h-screen max-w-md ml-auto rounded-none border border-gray-200 bg-white flex flex-col">
       {/* Header */}
-      <DrawerHeader className="border-b">
-        <DrawerTitle className="flex items-center justify-between">
+      <DrawerHeader className="border-b border-gray-200 mb-2">
+        <DrawerTitle className="flex items-center font-bold text-gray-700 justify-between">
           <span>Shopping Cart</span>
           <span className="text-sm font-normal text-gray-500">
             {cartItems.length} Items
@@ -45,15 +45,15 @@ export default function CartPopup() {
       </DrawerHeader>
 
       {/* Cart Items */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-5">
         {cartItems.map((item) => (
           <div
             key={item.id}
-            className="border rounded-xl p-3 bg-white shadow-sm hover:shadow-md transition"
+            className="pb-5 bg-white transition flex items-center justify-between border-b border-gray-200 last:border-b-0"
           >
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
               {/* Image */}
-              <div className="w-20 h-20 relative overflow-hidden rounded-lg border bg-gray-50">
+              <div className="w-20 h-20 relative overflow-hidden rounded-lg border border-gray-200  bg-gray-50">
                 <Image
                   src={item.image}
                   alt={item.name}
@@ -64,45 +64,46 @@ export default function CartPopup() {
 
               {/* Content */}
               <div className="flex-1">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold text-sm">{item.name}</h4>
+                <div className="flex flex-col">
+                  <h4 className="font-semibold text-gray-700 text-sm">{item.name}</h4>
+                  <p className="text-xs text-gray-500 mt-1">Medicine</p>
 
-                  <button className="text-red-500 hover:text-red-600">✕</button>
-                </div>
-
-                <p className="text-xs text-gray-500 mt-1">Medicine</p>
-
-                <p className="font-bold text-green-600 mt-2">৳{item.price}</p>
-
-                {/* Quantity */}
-                <div className="flex items-center gap-2 mt-3">
-                  <button className="w-8 h-8 border rounded-lg hover:bg-gray-100">
-                    -
-                  </button>
-
-                  <span className="font-medium w-8 text-center">
-                    {item.qty}
-                  </span>
-
-                  <button className="w-8 h-8 border rounded-lg hover:bg-gray-100">
-                    +
-                  </button>
+                  <p className="font-bold text-green-600 mt-2">৳{item.price}</p>
                 </div>
               </div>
             </div>
+            <div className="flex flex-col items-end gap-6">
+              {/* Remove */}
+              <button className="text-red-500 hover:text-red-600 transition">
+                ✕
+              </button>
 
-            {/* Item Total */}
-            <div className="mt-3 pt-3 border-t flex justify-between text-sm">
-              <span className="text-gray-500">Item Total</span>
+              {/* Quantity Controller */}
+              <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                <button className="w-9 h-9 flex items-center justify-center hover:bg-white transition">
+                  <FaMinus className="text-[12px]" />
+                </button>
 
-              <span className="font-semibold">৳{item.price * item.qty}</span>
+                <input
+                  type="text"
+                  min="1"
+                  max="999"
+                  value={item.qty}
+                  readOnly
+                  className="w-10 text-center bg-transparent font-semibold outline-none"
+                />
+
+                <button className="w-9 h-9 flex items-center justify-center hover:bg-white transition">
+                  <FaPlus className="text-[12px]" />
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Footer */}
-      <div className="border-t bg-white p-4 space-y-4">
+      <div className="border-t border-gray-200 bg-white p-4 space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
@@ -114,7 +115,7 @@ export default function CartPopup() {
             <span>৳60</span>
           </div>
 
-          <div className="flex justify-between text-lg font-bold pt-2 border-t">
+          <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
             <span>Total</span>
             <span>৳{subtotal + 60}</span>
           </div>
@@ -123,12 +124,6 @@ export default function CartPopup() {
         <Button className="w-full h-11 bg-[#2dc67b] hover:bg-[#25aa69] text-white">
           Proceed To Checkout
         </Button>
-
-        <DrawerClose asChild>
-          <Button variant="outline" className="w-full">
-            Continue Shopping
-          </Button>
-        </DrawerClose>
       </div>
     </DrawerContent>
   );

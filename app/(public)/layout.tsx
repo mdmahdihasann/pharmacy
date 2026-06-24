@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Navbar from "./components/header/Navbar";
 import TopBar from "./components/header/TopBar";
+import { PiPill } from "react-icons/pi";
 
 // ─── Icons (inline SVG) ───────────────────────────────────────────────────────
 const Icon = {
@@ -256,10 +257,10 @@ export default function PublicLayout({
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 bg-[#2dc67b] rounded-xl flex items-center justify-center">
-                <span className="text-white font-black text-sm">P+</span>
+              <div className="w-9 h-9 bg-[#2dc67b] rounded-lg flex items-center justify-center">
+                <span className="text-white font-black text-lg"><PiPill/></span>
               </div>
-              <span className="font-black text-xl">Propharm</span>
+              <span className="font-black text-xl">MediSwift</span>
             </div>
             <div className="space-y-2 text-sm text-gray-400">
               <p className="flex items-center gap-2 text-[#2dc67b] font-bold">
@@ -363,9 +364,9 @@ export default function PublicLayout({
         <div className="max-w-7xl mx-auto px-4 mt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-[#2dc67b] rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-xs">P+</span>
+              <span className="text-white font-black text-sm"><PiPill/></span>
             </div>
-            <span className="font-black text-sm">Propharm</span>
+            <span className="font-black text-sm">MediSwift</span>
           </div>
           <p className="text-xs text-gray-500">
             Copyright © Propharm, all rights reserved.

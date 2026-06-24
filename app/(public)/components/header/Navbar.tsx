@@ -132,14 +132,14 @@ const Navbar = () => {
                   </span>
                 </button>
               </DrawerTrigger>
-            
-            {open && <CartPopup />}
-            <button
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {/* {mobileMenuOpen ? <Icon.X /> : <Icon.Menu />} */}
-            </button>
+
+              {open && <CartPopup />}
+              <button
+                className="md:hidden p-2"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {/* {mobileMenuOpen ? <Icon.X /> : <Icon.Menu />} */}
+              </button>
             </Drawer>
           </div>
         </div>
