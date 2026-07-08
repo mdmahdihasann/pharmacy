@@ -7,6 +7,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String      @id @default(cuid())
+
+  // Basic Info
+  fullName        String
+  email           String?     @unique
+  phone           String?     @unique
+  password        String?
+
+  // Verification
+  emailVerified   Boolean     @default(false)
+  phoneVerified   Boolean     @default(false)
+
+  // Profile
+  image           String?
+  gender          String?
+  dateOfBirth     DateTime?
+
+  // Address
+  country         String?
+  district        String?
+  city            String?
+  area            String?
+  address         String?
+  postalCode      String?
+
+  // Role
+  role            Role        @default(USER)
+
+  // Status
+  status          Boolean     @default(true)
+
+  // Relations
+  cartItems       Cart[]
+  orders          Order[]
+  reviews         Review[]
+  wishlists       Wishlist[]
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+
+model EmailOTP {
+  id          String   @id @default(cuid())
+
+  email       String
+  otp         String
+
+  expiresAt   DateTime
+  verified    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+}
+
 model Category {
   id            String    @id @default(cuid())
   name          String
@@ -52,4 +112,97 @@ model Product {
 
   categoryId      String
   category        Category @relation(fields: [categoryId], references: [id])
+
+   cartItems       Cart[]
+
+  orderItems      OrderItem[]
+  wishlists       Wishlist[]
+  reviews         Review[]
+}
+
+
+model Cart {
+  id          String    @id @default(cuid())
+
+  userId      String
+  productId   String
+
+  quantity    Int       @default(1)
+
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product      Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+
+  subtotal        Float
+  shippingCharge  Float
+  discount        Float       @default(0)
+
+  total           Float
+
+  paymentStatus   String      @default("UNPAID")
+  orderStatus     String      @default("PENDING")
+
+  orderItems      OrderItem[]
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+
+model OrderItem {
+  id          String    @id @default(cuid())
+
+  orderId     String
+  productId   String
+
+  quantity    Int
+  price       Float
+
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product      Product    @relation(fields: [productId], references: [id])
+
+  createdAt   DateTime   @default(now())
+}
+
+model Wishlist {
+  id          String   @id @default(cuid())
+
+  userId      String
+  productId   String
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+
+  userId      String
+  productId   String
+
+  rating      Int
+  comment     String?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, productId])
 }

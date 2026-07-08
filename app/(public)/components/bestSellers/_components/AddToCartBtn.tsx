@@ -1,5 +1,6 @@
+"use client"
 import { useState } from "react";
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { FiMinus, FiPlus, FiTrash2  } from "react-icons/fi";
 
 import { HiOutlineShoppingCart } from "react-icons/hi";
 
@@ -12,8 +13,14 @@ interface Props {
 export default function AddToCartBtn({
   label = "Add to Cart",
   small,
-}: Props) {
+  product
+}: any) {
   const [qty, setQty] = useState(0);
+
+
+  const handleClick = () =>{
+    console.log(product);
+  }
 
   // Add To Cart Button
   if (qty === 0) {
@@ -35,7 +42,7 @@ export default function AddToCartBtn({
 
   // Quantity Selector
   return (
-    <div className="flex py-2 w-full items-center rounded-full border border-[#2dc67b]/30 bg-[#2dc67b]/5">
+    <div className="flex py-2 w-full items-center rounded-full border border-[#2dc67b]/30 bg-[#2dc67b]/5 overflow-hidden" onClick={handleClick}>
       <button
         onClick={() => {
           if (qty === 1) {
@@ -44,9 +51,9 @@ export default function AddToCartBtn({
             setQty((prev) => prev - 1);
           }
         }}
-        className="flex w-11 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
+        className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
       >
-        <FiMinus size={16} />
+        {qty === 1 ? <FiTrash2 size={16} /> : <FiMinus size={16} />}
       </button>
 
       <span className="flex-1 text-center text-sm font-bold text-[#2dc67b]">
@@ -55,7 +62,7 @@ export default function AddToCartBtn({
 
       <button
         onClick={() => setQty((prev) => prev + 1)}
-        className="flex w-11 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
+        className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
       >
         <FiPlus size={16} />
       </button>

@@ -48,7 +48,7 @@ export default function ProductCard({ product, size = "md" }: any) {
           Select options
         </button>
       ) : (
-        <AddToCartBtn small />
+        <AddToCartBtn small product={product}/>
       )}
     </div>
   );
