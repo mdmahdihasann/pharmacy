@@ -36,7 +36,6 @@ export async function POST(req: Request) {
   `,
     });
 
-    console.log("Resend Response:", response);
 
     return NextResponse.json({
       success: true,
