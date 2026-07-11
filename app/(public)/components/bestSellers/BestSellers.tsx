@@ -1,15 +1,36 @@
-"use client"
+"use client";
 import api from "@/lib/axios";
 
 import React, { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import ProductCard from "./_components/ProductCard";
-
-
-
+import useUser from "@/hooks/useUser";
 
 const BestSellers = () => {
   const [bestSaller, setBestSaller] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const user = useUser();
+  
+
+  useEffect(() => {
+    if (!user) return;
+    const allCart = async () => {
+      const res = await fetch("/api/getcart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user?.id,
+        }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setCartItems(result.data);
+      }
+    };
+    allCart();
+  }, [user]);
 
   useEffect(() => {
     const bestSaller = async () => {
@@ -32,9 +53,13 @@ const BestSellers = () => {
           </a>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-4">
-          {bestSaller.map((p: any) => (
-            <ProductCard key={p?.id} product={p} />
-          ))}
+          {bestSaller.map((p: any) => {
+            
+            const cart = cartItems.find((item: any) => item.productId === p.id);
+            return (
+              <ProductCard key={p.id} product={p} qty={cart?.quantity} />
+            );
+          })}
         </div>
       </div>
     </section>
