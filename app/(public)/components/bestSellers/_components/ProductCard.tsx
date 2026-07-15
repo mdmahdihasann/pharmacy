@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import AddToCartBtn from "./AddToCartBtn";
 
-export default function ProductCard({ product, qty, size = "md" }: any) {
+export default function ProductCard({ product, cartQty, size = "md" }: any) {
   
   const [wished, setWished] = useState(false);
   return (
@@ -49,7 +49,7 @@ export default function ProductCard({ product, qty, size = "md" }: any) {
           Select options
         </button>
       ) : (
-        <AddToCartBtn small product={product} qty={qty}/>
+        <AddToCartBtn small product={product} cartQty={cartQty}/>
       )}
     </div>
   );

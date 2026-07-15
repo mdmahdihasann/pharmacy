@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PT_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import ReduxProvider from "@/store/provider";
 
 const ptSans = PT_Sans({
   subsets: ["latin"],
@@ -21,8 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={ptSans.className} cz-shortcut-listen="true">
-          {children}
-          <Toaster position="top-right" richColors />
+        <ReduxProvider>{children}</ReduxProvider>
+
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

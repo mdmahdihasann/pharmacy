@@ -1,43 +1,30 @@
 "use client";
-import api from "@/lib/axios";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import ProductCard from "./_components/ProductCard";
 import useUser from "@/hooks/useUser";
+import useCart from "@/hooks/useCart";
+import api from "@/lib/axios";
 
 const BestSellers = () => {
-  const [bestSaller, setBestSaller] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
   const user = useUser();
-  
+  const [bestSeller, setBestSeller] = useState<any[]>([]);
+  const { cartItems, fetchCart } = useCart();
 
   useEffect(() => {
-    if (!user) return;
-    const allCart = async () => {
-      const res = await fetch("/api/getcart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-        }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        setCartItems(result.data);
-      }
-    };
-    allCart();
+    if (user?.id) {
+      fetchCart(user?.id);
+    }
   }, [user]);
 
   useEffect(() => {
-    const bestSaller = async () => {
-      const data = await api.get("products");
-      setBestSaller(data.data);
+    const getProducts = async () => {
+      const res = await api.get("/products");
+      setBestSeller(res.data);
     };
-    bestSaller();
+
+    getProducts();
   }, []);
 
   return (
@@ -53,12 +40,9 @@ const BestSellers = () => {
           </a>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-4">
-          {bestSaller.map((p: any) => {
-            
+          {bestSeller?.map((p: any) => {
             const cart = cartItems.find((item: any) => item.productId === p.id);
-            return (
-              <ProductCard key={p.id} product={p} qty={cart?.quantity} />
-            );
+            return <ProductCard key={p.id} product={p} cartQty={cart} />;
           })}
         </div>
       </div>

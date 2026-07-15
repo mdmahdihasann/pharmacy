@@ -1,4 +1,5 @@
 "use client";
+import useCart from "@/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
@@ -15,10 +16,11 @@ export default function AddToCartBtn({
   label = "Add to Cart",
   small,
   product,
-  qty,
+  cartQty,
 }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { addCart, decreseCart, increseCart, fetchCart  } = useCart();
 
   const user =
     typeof window !== "undefined"
@@ -31,26 +33,15 @@ export default function AddToCartBtn({
       return;
     }
     try {
-      setLoading(true);
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          productId: product?.id,
-        }),
+      const result = await addCart({
+        userId: user.id,
+        productId: product.id,
       });
-      const result = await res.json();
-      if (result.success) {
-        toast.success("Added to cart");
-      } else {
-        toast.error(result.message);
+      if (result) {
+        toast.success("Product add successfully");
       }
     } catch (error) {
       console.log(error);
-
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
@@ -59,27 +50,40 @@ export default function AddToCartBtn({
 
   const increments = async () => {
     try {
-      const inc = await fetch("/api/cart/increase", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          productId: product.id,
-        }),
+      const inc = await increseCart({
+        userId: user.id,
+        productId: product.id,
       });
-      await inc.json();
-      toast.success("cart increase successfully");
+      
+      if (inc) {
+        toast.success("Cart increased successfully");
+        await fetchCart(user.id);
+      }
     } catch (error) {
       console.log(error);
+      toast.error("Cart increase failed");
+    }
+  };
 
-      toast.error("cart increase faild");
+  const decrements = async () => {
+    try {
+      const dec = await decreseCart({
+        userId: user.id,
+        productId: product.id,
+      });
+      if(dec){
+        toast.success("Cart decreased successfully");
+        await fetchCart(user.id);
+      }
+      
+    } catch (error) {
+      console.log(error);
+      toast.error("Cart decreased failed");
     }
   };
 
   // Add To Cart Button
-  if (qty === 0) {
+  if (cartQty?.quantity === 0) {
     return (
       <button
         onClick={handleAddCart}
@@ -94,13 +98,20 @@ export default function AddToCartBtn({
 
   // Quantity Selector
   return (
-    <div className="flex py-2 w-full items-center rounded-full border border-[#2dc67b]/30 bg-[#2dc67b]/5 overflow-hidden">
-      <button className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10">
-        {qty === 1 ? <FiTrash2 size={16} /> : <FiMinus size={16} />}
+    <div className="flex py-1 w-full items-center rounded-full border border-[#2dc67b]/30 bg-[#2dc67b]/5 overflow-hidden">
+      <button
+        className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
+        onClick={decrements}
+      >
+        {cartQty?.quantity === 1 ? (
+          <FiTrash2 size={16} />
+        ) : (
+          <FiMinus size={16} />
+        )}
       </button>
 
       <span className="flex-1 text-center text-sm font-bold text-[#2dc67b]">
-        {qty}
+        {cartQty?.quantity}
       </span>
 
       <button

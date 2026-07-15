@@ -37,9 +37,9 @@ export async function POST(req: Request) {
       });
     }
 
-    return Response.json({ success: true, message: "Cart Add Successfully" });
+    return NextResponse.json({ success: true, message: "Cart Add Successfully" });
   } catch (error: any) {
     console.log(error.message);
-    return Response.json({ success: false, message: "Cart Not Added" });
+    return NextResponse.json({ success: false, message: "Cart Not Added" });
   }
 }

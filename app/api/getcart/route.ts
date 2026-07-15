@@ -21,10 +21,7 @@ export async function POST(req: Request) {
       },
       include:{
         product: true
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      }
     });
     return NextResponse.json(
       {
