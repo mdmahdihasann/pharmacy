@@ -9,10 +9,15 @@ import { FiHeart } from "react-icons/fi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import CartPopup from "../cartPopup/CartPopup";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
+import useCart from "@/hooks/useCart";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const {cartItems} = useCart();
+
+  
+
 
   const navLinks = [
     "Home",
@@ -128,7 +133,7 @@ const Navbar = () => {
                 >
                   <MdOutlineShoppingCart className="text-xl" />
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
-                    2
+                    {cartItems?.length || 0}
                   </span>
                 </button>
               </DrawerTrigger>

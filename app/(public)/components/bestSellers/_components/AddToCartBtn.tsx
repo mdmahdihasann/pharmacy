@@ -2,7 +2,8 @@
 import useCart from "@/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
+import { FaPlus, FaMinus } from "react-icons/fa6";
 
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ export default function AddToCartBtn({
         userId: user.id,
         productId: product.id,
       });
+      await fetchCart(user?.id);
       if (result) {
         toast.success("Product add successfully");
       }
@@ -56,7 +58,6 @@ export default function AddToCartBtn({
       });
       
       if (inc) {
-        toast.success("Cart increased successfully");
         await fetchCart(user.id);
       }
     } catch (error) {
@@ -72,7 +73,6 @@ export default function AddToCartBtn({
         productId: product.id,
       });
       if(dec){
-        toast.success("Cart decreased successfully");
         await fetchCart(user.id);
       }
       
@@ -83,7 +83,7 @@ export default function AddToCartBtn({
   };
 
   // Add To Cart Button
-  if (cartQty?.quantity === 0) {
+  if (!cartQty) {
     return (
       <button
         onClick={handleAddCart}
@@ -100,13 +100,13 @@ export default function AddToCartBtn({
   return (
     <div className="flex py-1 w-full items-center rounded-full border border-[#2dc67b]/30 bg-[#2dc67b]/5 overflow-hidden">
       <button
-        className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
+        className="flex w-11 h-12 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
         onClick={decrements}
       >
         {cartQty?.quantity === 1 ? (
-          <FiTrash2 size={16} />
+          <FiTrash2 size={16} className="text-red-500"/>
         ) : (
-          <FiMinus size={16} />
+          <FaMinus size={16} />
         )}
       </button>
 
@@ -116,9 +116,9 @@ export default function AddToCartBtn({
 
       <button
         onClick={increments}
-        className="flex w-11 h-9 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
+        className="flex w-11 h-12 items-center justify-center text-[#2dc67b] transition hover:bg-[#2dc67b]/10"
       >
-        <FiPlus size={16} />
+        <FaPlus size={16} />
       </button>
     </div>
   );

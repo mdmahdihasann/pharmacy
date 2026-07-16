@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
   // Admin only route
   if (
     pathname.startsWith("/admin") &&
-    role !== "admin"
+    role !== "ADMIN"
   ) {
     return NextResponse.redirect(
       new URL("/dashboard", request.url)
@@ -31,8 +31,8 @@ export function middleware(request: NextRequest) {
   // User cannot access dashboard
   if (
     pathname.startsWith("/dashboard") &&
-    role !== "admin" &&
-    role !== "user"
+    role !== "ADMIN" &&
+    role !== "USER"
   ) {
     return NextResponse.redirect(
       new URL("/login", request.url)

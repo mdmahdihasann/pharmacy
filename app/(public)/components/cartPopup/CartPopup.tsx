@@ -8,27 +8,44 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { FaPlus, FaMinus } from "react-icons/fa6";
+import { FiTrash2 } from "react-icons/fi";
+import useCart from "@/hooks/useCart";
+import useUser from "@/hooks/useUser";
+import { toast } from "sonner";
 
 export default function CartPopup() {
-  const cartItems = [
-    {
-      id: 1,
-      name: "Paracetamol 500mg",
-      price: 120,
-      qty: 2,
-      image: "/medicine.jpg",
-    },
-    {
-      id: 2,
-      name: "Napa Extra",
-      price: 80,
-      qty: 1,
-      image: "/medicine.jpg",
-    },
-  ];
+  const { cartItems, fetchCart, increseCart, decreseCart, deleteCart } = useCart();
+  const user = useUser();
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.qty,
+  const increments = async (item: any) => {
+    try {
+      await increseCart({ userId: user?.id, productId: item?.product?.id });
+      await fetchCart(user?.id);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+  const decrements = async (item: any) => {
+    try {
+      await decreseCart({ userId: user?.id, productId: item?.product?.id });
+      await fetchCart(user?.id);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  };
+
+  const handleDeleteCart = async (item: any) =>{
+    try {
+      await deleteCart({userId:user?.id, productId: item?.product?.id})
+      await fetchCart(user?.id);
+      toast.success("Cart delete successfully")
+    } catch (error:any) {
+      console.log(error.message);
+    }
+  }
+
+  const subtotal = cartItems?.reduce(
+    (total, item) => total + item.product.price * item.quantity,
     0,
   );
 
@@ -39,7 +56,7 @@ export default function CartPopup() {
         <DrawerTitle className="flex items-center font-bold text-gray-700 justify-between">
           <span>Shopping Cart</span>
           <span className="text-sm font-normal text-gray-500">
-            {cartItems.length} Items
+            {cartItems?.length} Items
           </span>
         </DrawerTitle>
       </DrawerHeader>
@@ -55,8 +72,8 @@ export default function CartPopup() {
               {/* Image */}
               <div className="w-20 h-20 relative overflow-hidden rounded-lg border border-gray-200  bg-gray-50">
                 <Image
-                  src={item.image}
-                  alt={item.name}
+                  src={item.product.images}
+                  alt={item.product.name}
                   fill
                   className="object-cover"
                 />
@@ -65,35 +82,52 @@ export default function CartPopup() {
               {/* Content */}
               <div className="flex-1">
                 <div className="flex flex-col">
-                  <h4 className="font-semibold text-gray-700 text-sm">{item.name}</h4>
+                  <h4 className="font-semibold text-gray-700 text-sm">
+                    {item.product.name}
+                  </h4>
                   <p className="text-xs text-gray-500 mt-1">Medicine</p>
 
-                  <p className="font-bold text-green-600 mt-2">৳{item.price}</p>
+                  <p className="font-bold text-green-600 mt-2">
+                    ৳{item.product.price}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="flex flex-col items-end gap-6">
               {/* Remove */}
-              <button className="text-red-500 hover:text-red-600 transition">
+              <button
+                className="text-red-500 hover:text-red-600 transition cursor-pointer"
+                onClick={() => handleDeleteCart(item)}
+              >
                 ✕
               </button>
 
               {/* Quantity Controller */}
               <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-                <button className="w-9 h-9 flex items-center justify-center hover:bg-white transition">
-                  <FaMinus className="text-[12px]" />
+                <button
+                  className="w-9 h-9 flex items-center justify-center hover:bg-white transition"
+                  onClick={() => decrements(item)}
+                >
+                  {item?.quantity === 1 ? (
+                    <FiTrash2 size={13} className="text-red-400" />
+                  ) : (
+                    <FaMinus size={12} />
+                  )}
                 </button>
 
                 <input
                   type="text"
                   min="1"
                   max="999"
-                  value={item.qty}
+                  value={item.quantity}
                   readOnly
                   className="w-10 text-center bg-transparent font-semibold outline-none"
                 />
 
-                <button className="w-9 h-9 flex items-center justify-center hover:bg-white transition">
+                <button
+                  className="w-9 h-9 flex items-center justify-center hover:bg-white transition"
+                  onClick={() => increments(item)}
+                >
                   <FaPlus className="text-[12px]" />
                 </button>
               </div>

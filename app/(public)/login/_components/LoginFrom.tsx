@@ -4,6 +4,10 @@ import { useRef, useState } from "react";
 import api from "@/lib/axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -17,7 +21,6 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-
 
   // OTP box change
   const handleOtpChange = (value: string, index: number) => {
@@ -36,27 +39,18 @@ export default function LoginForm() {
     }
   };
 
-
   // OTP backspace
   const handleOtpKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
-
-    if (
-      e.key === "Backspace" &&
-      !otp[index] &&
-      index > 0
-    ) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
       otpRefs.current[index - 1]?.focus();
     }
-
   };
-
 
   // Send OTP
   const sendOtp = async () => {
-
     if (!fullName.trim()) {
       return toast.error("Name is required");
     }
@@ -65,355 +59,152 @@ export default function LoginForm() {
       return toast.error("Email is required");
     }
 
-
     try {
-
       setLoading(true);
-
 
       await api.post("/auth/send-otp", {
         email,
       });
 
-
       toast.success("OTP Sent Successfully");
 
       setStep("verify");
-
-
     } catch (err: any) {
-
-      toast.error(
-        err?.response?.data?.message || "Failed"
-      );
-
+      toast.error(err?.response?.data?.message || "Failed");
     } finally {
-
       setLoading(false);
-
     }
-
   };
-
-
-  
 
   // Verify OTP
   const verifyOtp = async () => {
-
-
     if (!otp.trim()) {
       return toast.error("OTP is required");
     }
-
 
     if (otp.length !== 6) {
       return toast.error("Enter 6 digit OTP");
     }
 
-
     try {
-
       setLoading(true);
 
-
-      const res = await api.post(
-        "/auth/verify-otp",
-        {
-          fullName,
-          email,
-          otp,
-        }
-      );
-
+      const res = await api.post("/auth/verify-otp", {
+        fullName,
+        email,
+        otp,
+      });
 
       toast.success("Login Success");
 
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
-
-      const user = JSON.parse(
-        localStorage.getItem("user") || "{}"
-      )
-      if(user.role === "ADMIN"){
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (user.role === "ADMIN") {
         router.push("/dashboard");
-      }else{
+      } else {
         router.push("/");
       }
-
-      
-
-      
-
-
     } catch (err: any) {
-
-      toast.error(
-        err?.response?.data?.message || "Invalid OTP"
-      );
-
+      toast.error(err?.response?.data?.message || "Invalid OTP");
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
-
-
   return (
+      <Card className="max-w-sm mx-auto mt-16 mb-20 shadow-xl border border-gray-400 rounded-2xl ">
+        <CardHeader>
+          <CardTitle className="text-2xl font-semibold text-gray-800">
+            {step === "send" ? "Login" : "Verify OTP"}
+          </CardTitle>
+        </CardHeader>
 
-    <div className="
-      max-w-md
-      mx-auto
-      mt-20
-      rounded-2xl
-      border
-      bg-white
-      p-8
-      shadow-lg
-    ">
+        <CardContent className="space-y-5">
+          {step === "send" && (
+            <>
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-700">Full Name</Label>
 
+                <Input
+                  placeholder="Enter your name"
+                  value={fullName}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border border-gray-400"
+                />
+              </div>
 
-      <h2 className="
-        text-3xl
-        font-bold
-        mb-6
-        text-center
-      ">
-        {
-          step === "send"
-          ? "Create Account"
-          : "Verify OTP"
-        }
-      </h2>
+              <div className="space-y-2">
+                <Label className="font-semibold text-gray-700">Email</Label>
 
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border border-gray-400"
+                />
+              </div>
 
+              <Button
+                className="w-full bg-[#2dc67b] hover:bg-[#25b16b] text-white h-9"
+                onClick={sendOtp}
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Send OTP"}
+              </Button>
+            </>
+          )}
+          {step === "verify" && (
+            <>
+              <p className="text-start text-sm text-muted-foreground">
+                OTP sent to
+                <br />
+                <span className="font-semibold text-black">{email}</span>
+              </p>
 
-      {/* Step 1 */}
-
-      {
-        step === "send" && (
-
-          <>
-
-            <input
-              className="
-                border
-                rounded-xl
-                p-3
-                w-full
-                mb-4
-                outline-none
-                focus:border-[#2dc67b]
-                focus:ring-4
-                focus:ring-[#2dc67b]/20
-              "
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e)=>setName(e.target.value)}
-            />
-
-
-
-            <input
-              className="
-                border
-                rounded-xl
-                p-3
-                w-full
-                mb-6
-                outline-none
-                focus:border-[#2dc67b]
-                focus:ring-4
-                focus:ring-[#2dc67b]/20
-              "
-              placeholder="Email"
-              type="email"
-              value={email}
-              onChange={(e)=>setEmail(e.target.value)}
-            />
-
-
-
-            <button
-              onClick={sendOtp}
-              disabled={loading}
-              className="
-                w-full
-                bg-[#2dc67b]
-                hover:bg-[#25ad69]
-                text-white
-                rounded-xl
-                p-3
-                font-semibold
-                transition
-              "
-            >
-
-              {
-                loading
-                ? "Sending..."
-                : "Send OTP"
-              }
-
-            </button>
-
-
-          </>
-
-        )
-      }
-
-
-
-
-
-      {/* Step 2 */}
-
-      {
-        step === "verify" && (
-
-          <>
-
-            <p className="
-              text-sm
-              text-gray-500
-              mb-6
-              text-center
-            ">
-              OTP has been sent to
-              <br />
-              <b className="text-gray-800">
-                {email}
-              </b>
-            </p>
-
-
-
-
-            {/* Modern OTP Input */}
-
-            <div className="
-              flex
-              justify-center
-              gap-3
-              mb-6
-            ">
-
-              {
-                [0,1,2,3,4,5].map((index)=>(
-
-                  <input
+              <div className="flex justify-between gap-2">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <Input
                     key={index}
-                    ref={(el)=>{
-                      otpRefs.current[index]=el;
+                    ref={(el) => {
+                      otpRefs.current[index] = el;
                     }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
                     value={otp[index] || ""}
-                    onChange={(e)=>
-                      handleOtpChange(
-                        e.target.value,
-                        index
-                      )
-                    }
-                    onKeyDown={(e)=>
-                      handleOtpKeyDown(
-                        e,
-                        index
-                      )
-                    }
-                    className="
-                      w-12
-                      h-14
-                      rounded-xl
-                      border
-                      border-gray-300
-                      text-center
-                      text-2xl
-                      font-bold
-                      outline-none
-                      transition
-                      focus:border-[#2dc67b]
-                      focus:ring-4
-                      focus:ring-[#2dc67b]/20
-                    "
+                    onChange={(e) => handleOtpChange(e.target.value, index)}
+                    onKeyDown={(e) => handleOtpKeyDown(e, index)}
+                    maxLength={1}
+                    inputMode="numeric"
+                    className="w-10 h-9 text-center text-xl font-bold border border-gray-500"
                   />
+                ))}
+              </div>
 
-                ))
-              }
+              <Button
+                className="w-full bg-[#2dc67b] hover:bg-[#25b16b]  text-white h-9"
+                onClick={verifyOtp}
+                disabled={loading}
+              >
+                {loading ? "Verifying..." : "Verify OTP"}
+              </Button>
 
-            </div>
+              <Button variant="outline" className="w-full mb-2 text-gray-800 h-9 border-gray-400 hover:bg-(--primary-color)" onClick={sendOtp}>
+                Resend OTP
+              </Button>
 
-
-
-
-            <button
-              onClick={verifyOtp}
-              disabled={loading}
-              className="
-                w-full
-                bg-[#2dc67b]
-                hover:bg-[#25ad69]
-                text-white
-                rounded-xl
-                p-3
-                font-semibold
-              "
-            >
-
-              {
-                loading
-                ? "Verifying..."
-                : "Verify OTP"
-              }
-
-            </button>
-
-
-
-
-            <button
-              onClick={sendOtp}
-              className="
-                w-full
-                mt-3
-                text-[#2dc67b]
-                font-medium
-              "
-            >
-              Resend OTP
-            </button>
-
-
-
-            <button
-              onClick={()=>{
-                setStep("send");
-                setOtp("");
-              }}
-              className="
-                w-full
-                mt-2
-                text-gray-500
-              "
-            >
-              Change Email
-            </button>
-
-
-          </>
-
-        )
-      }
-
-    </div>
-
+              <Button
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setStep("send");
+                  setOtp("");
+                }}
+              >
+                Change Email
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
   );
 }

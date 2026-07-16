@@ -30,7 +30,6 @@ export const fetchCart = createAsyncThunk(
 );
 
 // cart api
-
 export const addCart = createAsyncThunk(
   "cart/addCart",
   async ({ userId, productId }: { userId: string; productId: string }) => {
@@ -54,9 +53,9 @@ export const increseCart = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({userId, productId}),
+      body: JSON.stringify({ userId, productId }),
     });
-    return userId
+    return userId;
   },
 );
 
@@ -69,46 +68,68 @@ export const decreseCart = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({userId, productId}),
+      body: JSON.stringify({ userId, productId }),
     });
-    return userId
+    return userId;
   },
 );
 
-
+// delete cart
+export const deleteCart = createAsyncThunk(
+  "cart/delete",
+  async ({ userId, productId }: { userId: string; productId: string }) => {
+    const res = await fetch("/api/cart", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        productId,
+      }),
+    });
+    return await res.json();
+  },
+);
 
 const cartSlice = createSlice({
   name: "cart",
   initialState,
 
   reducers: {},
-  extraReducers: (builder) =>{
+  extraReducers: (builder) => {
     builder
-        
-        // get cart
-        .addCase(fetchCart.pending, (state)=>{
-            state.loading = true;
-        })
 
-        .addCase(fetchCart.fulfilled, (state, action)=>{
+      // get cart
+      .addCase(fetchCart.pending, (state) => {
+        state.loading = true;
+      })
 
-            state.loading = false;
-            state.items = action.payload;
-        })
+      .addCase(fetchCart.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload;
+      })
 
-        .addCase(fetchCart.rejected, (state)=>{
-            state.loading = true;
-        })
+      .addCase(fetchCart.rejected, (state) => {
+        state.loading = true;
+      })
 
-        // add
-        .addCase(addCart.fulfilled, (state)=>{})
+      // add
+      .addCase(addCart.fulfilled, (state) => {})
 
-        // increase
-        .addCase(increseCart.fulfilled, (state)=>{})
+      // increase
+      .addCase(increseCart.fulfilled, (state) => {})
 
-        // decrease
-        .addCase(decreseCart.fulfilled, (state)=>{})
-  }
+      // decrease
+      .addCase(decreseCart.fulfilled, (state) => {})
+
+      // deletecart
+      .addCase(deleteCart.fulfilled, (state, action) => {
+        state.items = state.items.filter(
+          (item) => item.id !== action.payload.id,
+        );
+      });
+  },
 });
 
 export default cartSlice.reducer;
