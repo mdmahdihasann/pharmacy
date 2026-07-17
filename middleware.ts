@@ -3,13 +3,13 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
 
-  const token = request.cookies.get("token");
+  const token = request.cookies.get("token")?.value;
   const role = request.cookies.get("role")?.value;
 
   const pathname = request.nextUrl.pathname;
 
 
-  // Not logged in
+  // Login check
   if (!token) {
     return NextResponse.redirect(
       new URL("/login", request.url)
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   }
 
 
-  // Admin only route
+  // Admin route only
   if (
     pathname.startsWith("/admin") &&
     role !== "ADMIN"
@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
   }
 
 
-  // User cannot access dashboard
+  // Dashboard access
   if (
     pathname.startsWith("/dashboard") &&
     role !== "ADMIN" &&

@@ -144,6 +144,20 @@ model Order {
   userId          String
   user            User        @relation(fields: [userId], references: [id])
 
+  // Customer Info
+  fullName        String
+  email           String
+  phone           String
+
+  division        String
+  district        String
+  upazila         String
+  address         String
+
+  note            String?
+
+  paymentMethod   String
+
   subtotal        Float
   shippingCharge  Float
   discount        Float       @default(0)

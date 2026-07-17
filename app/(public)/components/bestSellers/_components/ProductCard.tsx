@@ -1,22 +1,12 @@
-
-import { FiHeart } from "react-icons/fi";
-import { GoHeartFill } from "react-icons/go";
 import Image from "next/image";
-import { useState } from "react";
 import AddToCartBtn from "./AddToCartBtn";
+import WishlistBtn from "./WishlistBtn";
 
 export default function ProductCard({ product, cartQty, size = "md" }: any) {
   
-  const [wished, setWished] = useState(false);
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative flex flex-col overflow-hidden p-2.5">
-      <button
-        onClick={() => setWished(!wished)}
-        className="absolute top-3 right-3 z-10 text-gray-300 hover:text-red-500 transition-colors"
-        aria-label="Wishlist"
-      >
-        {wished ? <GoHeartFill className="text-red-500" /> : <FiHeart />}
-      </button>
+      <WishlistBtn product ={product}/>
       <div className="flex justify-center h-full text-5xl p-6 overflow-hidden ">
         <Image
           src={product.images}

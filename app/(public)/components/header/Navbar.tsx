@@ -10,14 +10,15 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import CartPopup from "../cartPopup/CartPopup";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import useCart from "@/hooks/useCart";
+import useWishlist from "@/hooks/useWishlist";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
-  const {cartItems} = useCart();
-
-  
-
+  const { cartItems } = useCart();
+  const {wishItems} = useWishlist();
+  const router = useRouter();
 
   const navLinks = [
     "Home",
@@ -121,8 +122,13 @@ const Navbar = () => {
             <button className="hidden sm:block p-2 text-gray-600 hover:text-[#2dc67b] transition-colors">
               <LuGitCompareArrows className="text-xl" />
             </button>
-            <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative">
+            <button className="p-2 text-gray-600 hover:text-[#2dc67b] transition-colors relative" onClick={()=>router.push("/wishlist")}>
               <FiHeart className="text-xl" />
+              {wishItems?.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                  {wishItems?.length}
+                </span>
+              )}
             </button>
 
             <Drawer direction="right">
@@ -132,9 +138,11 @@ const Navbar = () => {
                   onClick={() => setOpen(true)}
                 >
                   <MdOutlineShoppingCart className="text-xl" />
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
-                    {cartItems?.length || 0}
-                  </span>
+                  {cartItems?.length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#2dc67b] text-white text-[9px] rounded-full flex items-center justify-center font-bold">
+                      {cartItems?.length}
+                    </span>
+                  )}
                 </button>
               </DrawerTrigger>
 
