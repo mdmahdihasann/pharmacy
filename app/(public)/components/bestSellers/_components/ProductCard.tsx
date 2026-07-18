@@ -1,13 +1,16 @@
+"use client"
 import Image from "next/image";
 import AddToCartBtn from "./AddToCartBtn";
 import WishlistBtn from "./WishlistBtn";
+import { useRouter } from "next/navigation";
 
 export default function ProductCard({ product, cartQty, size = "md" }: any) {
+  const router = useRouter();
   
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative flex flex-col overflow-hidden p-2.5">
       <WishlistBtn product ={product}/>
-      <div className="flex justify-center h-full text-5xl p-6 overflow-hidden ">
+      <div className="flex justify-center h-full text-5xl p-6 overflow-hidden " onClick={()=>router.push(product?.id)}>
         <Image
           src={product.images}
           width={200}

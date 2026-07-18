@@ -3,6 +3,58 @@ import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 
+
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        category: true,
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Product not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    const relatedProducts = await prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId,
+        id: {
+          not: product.id,
+        },
+      },
+      take: 4,
+    });
+
+    return NextResponse.json({
+      success: true,
+      product,
+      relatedProducts,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },

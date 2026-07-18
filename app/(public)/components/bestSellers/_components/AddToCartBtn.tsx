@@ -87,7 +87,7 @@ export default function AddToCartBtn({
     return (
       <button
         onClick={handleAddCart}
-        className={`flex items-center justify-center gap-2 rounded-full border bg-[#2dc67b] font-semibold text-white transition-all hover:bg-[#27b66f]
+        className={`flex items-center h-10 justify-center gap-2 rounded-full border bg-[#2dc67b] font-semibold text-white transition-all hover:bg-[#27b66f]
           ${small ? "w-full px-3 py-2 text-sm" : "w-full px-4 py-2 text-sm"}`}
       >
         <HiOutlineShoppingCart className="text-lg" />
