@@ -10,7 +10,7 @@ export default function ProductCard({ product, cartQty, size = "md" }: any) {
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative flex flex-col overflow-hidden p-2.5">
       <WishlistBtn product ={product}/>
-      <div className="flex justify-center h-full text-5xl p-6 overflow-hidden " onClick={()=>router.push(product?.id)}>
+      <div className="flex justify-center h-full text-5xl p-6 overflow-hidden " onClick={()=>router.push(`products/${product?.id}`)}>
         <Image
           src={product.images}
           width={200}

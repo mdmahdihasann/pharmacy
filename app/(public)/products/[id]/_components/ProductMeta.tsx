@@ -10,7 +10,7 @@ const ProductMeta = ({ sku, category, tag }: any) => {
       <p>
         <span className="font-medium">Category:</span>{" "}
         <a href="#" className="text-blue-600 hover:underline">
-          {category}
+          {category?.name}
         </a>
       </p>
       <p>

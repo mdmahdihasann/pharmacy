@@ -60,13 +60,7 @@ const ProductTabs = ({ description, additionalInfo, reviews }: any) => {
         >
           <h2 className="text-xl font-semibold text-gray-900">Description</h2>
           <p>{description}</p>
-          <p>
-            To take a trivial example, which of us ever undertakes laborious
-            physical exercise, except to obtain some advantage from it? But who
-            has any right to find fault with a man who chooses to enjoy a
-            pleasure that has no annoying consequences, or one who avoids a pain
-            that produces no resultant pleasure?
-          </p>
+          
         </TabsContent>
 
         <TabsContent value="additional" className="mt-5">
@@ -76,14 +70,14 @@ const ProductTabs = ({ description, additionalInfo, reviews }: any) => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <tbody>
-                {Object.entries(additionalInfo).map(([key, value]) => (
+                {/* {Object.entries(additionalInfo).map(([key, value]) => (
                   <tr key={key} className="border-b border-gray-100">
                     <td className="py-2.5 font-medium text-gray-700 w-1/3">
                       {key}
                     </td>
                     <td className="py-2.5 text-gray-600">{value}</td>
                   </tr>
-                ))}
+                ))} */}
               </tbody>
             </table>
           </div>
@@ -96,7 +90,7 @@ const ProductTabs = ({ description, additionalInfo, reviews }: any) => {
 
           {/* Review List */}
           <div className="space-y-6">
-            {reviews.map((review: any) => (
+            {/* {reviews.map((review: any) => (
               <div
                 key={review?.id}
                 className="flex gap-4 pb-6 border-b border-gray-100"
@@ -126,7 +120,7 @@ const ProductTabs = ({ description, additionalInfo, reviews }: any) => {
                   </p>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
 
           {/* Review Form */}

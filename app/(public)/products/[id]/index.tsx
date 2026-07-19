@@ -5,7 +5,7 @@ import ProductTabs from './_components/ProductTabs';
 import RelatedProducts from './_components/RelatedProducts';
 import { Button } from '@/components/ui/button';
 
-const ProductDetails = ({ productData }: any) => {
+const ProductDetails = ({ productData, relatedProducts }: any) => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-white">
       {/* Breadcrumb */}
@@ -24,13 +24,13 @@ const ProductDetails = ({ productData }: any) => {
 
       {/* Tabs Section */}
       <ProductTabs 
-        description={productData.description}
-        additionalInfo={productData.additionalInfo}
-        reviews={productData.reviews}
+        description={productData?.description}
+        additionalInfo={productData?.additionalInfo}
+        reviews={productData?.reviews}
       />
 
       {/* Related Products */}
-      <RelatedProducts products={productData.relatedProducts} />
+      <RelatedProducts products={relatedProducts} />
 
       {/* Previous/Next Navigation */}
       <div className="mt-8 flex justify-between items-center border-t border-gray-200 pt-6 text-sm">

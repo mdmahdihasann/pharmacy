@@ -60,20 +60,20 @@ const MainProductDetails = ({ data }: any) => {
         </div>
 
         {/* Short Description */}
-        <ul className="mt-4 space-y-1.5">
+        {/* <ul className="mt-4 space-y-1.5">
           {data?.shortDesc.map((item: string, idx: number) => (
             <li key={idx} className="flex items-center gap-2 text-sm text-gray-700">
               <Check className="w-4 h-4 text-green-600" />
               {item}
             </li>
           ))}
-        </ul>
+        </ul> */}
 
         {/* Price */}
         <div className="mt-4 flex items-center gap-4">
           <span className="text-3xl font-bold text-red-600">${data?.price.toFixed(2)}</span>
-          {data?.originalPrice && (
-            <span className="text-lg text-gray-400 line-through">${data?.originalPrice.toFixed(2)}</span>
+          {data?.salePrice && (
+            <span className="text-lg text-gray-400 line-through">${data?.salePrice.toFixed(2)}</span>
           )}
         </div>
 
